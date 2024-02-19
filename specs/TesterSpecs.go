@@ -20,8 +20,8 @@ type Tester interface {
 
 	HealthCheck(serverUrl, hookUrl string) error
 
-	ClientConnect(serverUrl, hookUrl string) (client ConnectedClient, sid string, err error)
-	ClientSubscribe(client ConnectedClient, eventUrl, sid string) (unsubscribe func(), err error)
+	ClientConnect(eventUrl, hookUrl string) (client ConnectedClient, sid string, err error)
+	ClientSubscribe(client ConnectedClient, sid string) (unsubscribe func(), err error)
 	MakeRequest(req *http.Request) (res *http.Response, err error)
 }
 
@@ -41,12 +41,12 @@ func TesterSpecification(t *testing.T, tester Tester) {
 	assert.NoError(t, tester.HealthCheck(serverUrl, hookUrl), "Server or Hook not healthy")
 
 	// Client Side
-	client, sid, err := tester.ClientConnect(serverUrl, hookUrl)
+	eventUrl := serverUrl + "/events"
+	client, sid, err := tester.ClientConnect(eventUrl, hookUrl)
 	assert.NoError(t, err, "Client could not establish connection")
 
 	// Subscribe to event
-	eventUrl := serverUrl + "/events"
-	ubsubscribe, err := tester.ClientSubscribe(client, eventUrl, sid)
+	ubsubscribe, err := tester.ClientSubscribe(client, sid)
 	assert.NoError(t, err, "Could not subscribe to event")
 	t.Cleanup(ubsubscribe)
 
@@ -69,5 +69,6 @@ func makeRequestGetHookOutput(t *testing.T, tester Tester, url string, outputBuf
 	// save output buffer response
 	afterHook, err := io.ReadAll(outputBuffer)
 	assert.NoError(t, err)
+	assert.NotEqual[[]byte](t, []byte{}, afterHook)
 	return afterHook
 }
