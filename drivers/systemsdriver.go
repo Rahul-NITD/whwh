@@ -12,6 +12,8 @@ import (
 	"net/url"
 	"sync"
 
+	"github.com/Rahul-NITD/whwh/handlers"
+	"github.com/Rahul-NITD/whwh/systems/hook"
 	sse "github.com/r3labs/sse/v2"
 )
 
@@ -30,53 +32,16 @@ func NewSysDriver() *SysDriver {
 
 // TesterServerStart implements specs.Tester.
 func (d *SysDriver) TesterServerStart() (serverUrl string, shutdown func(), err error) {
-	r := http.NewServeMux()
-
-	sseserver := sse.New()
-
-	testsid := "ccb04aa8-1b6f-4f24-b9de-d274b39c5128"
-
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		var buf bytes.Buffer
-		r.Write(&buf)
-
-		val, err := json.Marshal(buf.Bytes())
-		if err != nil {
-			println("Error in Marshalling,", err)
-		}
-
-		sseserver.Publish(testsid, &sse.Event{
-			Data: val,
-		})
+	handler := handlers.NewTesterServerHandler(func() {
 		<-d.done
 	})
-	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "All systems healthy")
-	})
-	r.HandleFunc("/createstream", func(w http.ResponseWriter, r *http.Request) {
-		sid := testsid
-		sseserver.CreateStream(sid)
-		fmt.Fprint(w, sid)
-	})
-	r.HandleFunc("/events", sseserver.ServeHTTP)
-
-	svr := httptest.NewServer(r)
+	svr := httptest.NewServer(handler)
 	return svr.URL, svr.Close, nil
 }
 
 // HookServerStart implements specs.Tester.
 func (d *SysDriver) HookServerStart(outputBuffer *bytes.Buffer) (hookUrl string, shutdown func(), err error) {
-
-	r := http.NewServeMux()
-
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		d.mu.Lock()
-		defer d.mu.Unlock()
-		outputBuffer.Reset()
-		r.Write(outputBuffer)
-	})
-
-	svr := httptest.NewServer(r)
+	svr := httptest.NewServer(hook.NewHook(outputBuffer))
 	return svr.URL, svr.Close, nil
 }
 

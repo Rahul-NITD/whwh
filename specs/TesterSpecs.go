@@ -53,10 +53,10 @@ func TesterSpecification(t *testing.T, tester Tester) {
 	t.Cleanup(ubsubscribe)
 
 	// Test Request
-	afterHook := makeRequestGetHookOutput(t, tester, hookUrl, outputBuffer)
+	afterHook := makeRequestGetHookOutput(t, tester, hookUrl, sid, outputBuffer)
 	assert.NoError(t, assertLineToRequest(afterHook), "Could not form a request from the line representations returned, "+string(afterHook))
 
-	afterServer := makeRequestGetHookOutput(t, tester, serverUrl, outputBuffer)
+	afterServer := makeRequestGetHookOutput(t, tester, serverUrl, sid, outputBuffer)
 	assert.NoError(t, assertLineToRequest(afterServer), "Could not form a request from the line representations returned, "+string(afterHook))
 	assert.Equal[string](t, afterHook, afterServer)
 }
@@ -66,10 +66,13 @@ func assertLineToRequest(p string) error {
 	return err
 }
 
-func makeRequestGetHookOutput(t *testing.T, tester Tester, url string, outputBuffer *bytes.Buffer) string {
+func makeRequestGetHookOutput(t *testing.T, tester Tester, url string, sid string, outputBuffer *bytes.Buffer) string {
 	t.Helper()
 	req, err := http.NewRequest(http.MethodPost, url, http.NoBody)
 	assert.NoError(t, err, "Error while creating POST request "+url)
+	q := req.URL.Query()
+	q.Add("stream", sid)
+	req.URL.RawQuery = q.Encode()
 	res, err := tester.MakeRequest(req)
 	assert.NoError(t, err, "Error in making request to hook "+url)
 	assert.Equal[int](t, http.StatusOK, res.StatusCode)
