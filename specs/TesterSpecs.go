@@ -1,9 +1,11 @@
 package specs
 
 import (
+	"bufio"
+	"bytes"
 	"context"
-	"io"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/alecthomas/assert/v2"
@@ -11,17 +13,17 @@ import (
 )
 
 type ConnectedClient interface {
-	SubscribeChanWithContext(cxt context.Context, stream string, eventChannel chan *sse.Event)
+	SubscribeChanWithContext(cxt context.Context, stream string, eventChannel chan *sse.Event) error
 }
 
 type Tester interface {
 	TesterServerStart() (serverUrl string, shutdown func(), err error)
-	HookServerStart() (hookUrl string, outputBuffer io.Reader, shutdown func(), err error)
+	HookServerStart(outputBuffer *bytes.Buffer) (hookUrl string, shutdown func(), err error)
 
 	HealthCheck(serverUrl, hookUrl string) error
 
-	ClientConnect(eventUrl, hookUrl string) (client ConnectedClient, sid string, err error)
-	ClientSubscribe(client ConnectedClient, sid string) (unsubscribe func(), err error)
+	ClientConnect(eventUrl, hookUrl string) (client *sse.Client, sid string, err error)
+	ClientSubscribe(client *sse.Client, sid string, hookUrl string) (unsubscribe func(), err error)
 	MakeRequest(req *http.Request) (res *http.Response, err error)
 }
 
@@ -33,32 +35,38 @@ func TesterSpecification(t *testing.T, tester Tester) {
 	t.Cleanup(shutdown)
 
 	// For hook
-	hookUrl, outputBuffer, shutdown, err := tester.HookServerStart()
+	outputBuffer := &bytes.Buffer{}
+	hookUrl, shutdown, err := tester.HookServerStart(outputBuffer)
 	assert.NoError(t, err, "Tester Server could not be started")
 	t.Cleanup(shutdown)
 
 	// HealthCheck
-	assert.NoError(t, tester.HealthCheck(serverUrl, hookUrl), "Server or Hook not healthy")
+	assert.NoError(t, tester.HealthCheck(serverUrl, hookUrl), "Server not healthy")
 
 	// Client Side
-	eventUrl := serverUrl + "/events"
-	client, sid, err := tester.ClientConnect(eventUrl, hookUrl)
+	client, sid, err := tester.ClientConnect(serverUrl, hookUrl)
 	assert.NoError(t, err, "Client could not establish connection")
 
 	// Subscribe to event
-	ubsubscribe, err := tester.ClientSubscribe(client, sid)
+	ubsubscribe, err := tester.ClientSubscribe(client, sid, hookUrl)
 	assert.NoError(t, err, "Could not subscribe to event")
 	t.Cleanup(ubsubscribe)
 
 	// Test Request
-	t.Run("Test POST without body", func(t *testing.T) {
-		afterHook := makeRequestGetHookOutput(t, tester, hookUrl, outputBuffer)
-		afterServer := makeRequestGetHookOutput(t, tester, serverUrl, outputBuffer)
-		assert.Equal[[]byte](t, afterHook, afterServer)
-	})
+	afterHook := makeRequestGetHookOutput(t, tester, hookUrl, outputBuffer)
+	assert.NoError(t, assertLineToRequest(afterHook), "Could not form a request from the line representations returned, "+string(afterHook))
+
+	afterServer := makeRequestGetHookOutput(t, tester, serverUrl, outputBuffer)
+	assert.NoError(t, assertLineToRequest(afterServer), "Could not form a request from the line representations returned, "+string(afterHook))
+	assert.Equal[string](t, afterHook, afterServer)
 }
 
-func makeRequestGetHookOutput(t *testing.T, tester Tester, url string, outputBuffer io.Reader) []byte {
+func assertLineToRequest(p string) error {
+	_, err := http.ReadRequest(bufio.NewReader(strings.NewReader(p)))
+	return err
+}
+
+func makeRequestGetHookOutput(t *testing.T, tester Tester, url string, outputBuffer *bytes.Buffer) string {
 	t.Helper()
 	req, err := http.NewRequest(http.MethodPost, url, http.NoBody)
 	assert.NoError(t, err, "Error while creating POST request "+url)
@@ -67,8 +75,8 @@ func makeRequestGetHookOutput(t *testing.T, tester Tester, url string, outputBuf
 	assert.Equal[int](t, http.StatusOK, res.StatusCode)
 
 	// save output buffer response
-	afterHook, err := io.ReadAll(outputBuffer)
-	assert.NoError(t, err)
+	afterHook := outputBuffer.Bytes()
 	assert.NotEqual[[]byte](t, []byte{}, afterHook)
-	return afterHook
+	defer outputBuffer.Reset()
+	return string(afterHook)
 }

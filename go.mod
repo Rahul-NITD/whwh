@@ -11,6 +11,7 @@ require (
 
 require (
 	github.com/alecthomas/assert/v2 v2.6.0
+	github.com/google/uuid v1.6.0
 	golang.org/x/net v0.0.0-20191116160921-f9c825593386 // indirect
 	gopkg.in/cenkalti/backoff.v1 v1.1.0 // indirect
 )

@@ -8,6 +8,6 @@ import (
 )
 
 func TestSystem(t *testing.T) {
-	driver := &drivers.SysDriver{}
+	driver := drivers.NewSysDriver()
 	specs.TesterSpecification(t, driver)
 }
