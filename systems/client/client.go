@@ -14,16 +14,20 @@ import (
 )
 
 func ClientConnect(serverUrl string, hookUrl string) (*sse.Client, string, error) {
+
 	res, err := http.Get(serverUrl + systems.CREATESTREAMPATH)
 	if err != nil {
 		return nil, "", err
 	}
-	sid, err := io.ReadAll(res.Body)
+
 	defer res.Body.Close()
+
+	sid, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, "", err
 	}
-	cli := sse.NewClient(serverUrl + "/events")
+
+	cli := sse.NewClient(serverUrl + systems.EVENTSPATH)
 
 	return cli, string(sid), nil
 }

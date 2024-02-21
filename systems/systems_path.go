@@ -1,3 +1,8 @@
 package systems
 
-const CREATESTREAMPATH = "/createstream"
+const (
+	CREATESTREAMPATH = "/createstream"
+	HEALTHPATH       = "/health"
+	HOMEPATH         = "/"
+	EVENTSPATH       = "/events"
+)

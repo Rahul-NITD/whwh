@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 
 	"github.com/Rahul-NITD/whwh/handlers"
+	"github.com/Rahul-NITD/whwh/systems"
 	"github.com/Rahul-NITD/whwh/systems/client"
 	"github.com/Rahul-NITD/whwh/systems/hook"
 	sse "github.com/r3labs/sse/v2"
@@ -48,9 +49,9 @@ func (*SysDriver) HealthCheck(serverUrl string, hookUrl string) error {
 }
 
 func makeHealthRequest(url string) error {
-	res, err := http.Get(url + "/health")
+	res, err := http.Get(url + systems.HEALTHPATH)
 	if err != nil {
-		return fmt.Errorf("could not make request to server, %s, %s", url+"/health", err.Error())
+		return fmt.Errorf("could not make request to server, %s, %s", url+systems.HEALTHPATH, err.Error())
 	}
 	if res.StatusCode != http.StatusOK {
 		return fmt.Errorf("server not healthy, got %d", res.StatusCode)

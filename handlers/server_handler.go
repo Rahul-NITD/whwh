@@ -29,10 +29,10 @@ func NewTesterServerHandler(deferhome ...func()) *TesterServerHandler {
 	t.sseServer = sse.New()
 	t.sseServer.AutoReplay = false
 
-	r.HandleFunc("/", t.homeHandler)
-	r.HandleFunc("/health", t.healthHandler)
+	r.HandleFunc(systems.HOMEPATH, t.homeHandler)
+	r.HandleFunc(systems.HEALTHPATH, t.healthHandler)
 	r.HandleFunc(systems.CREATESTREAMPATH, t.createStreamHandler)
-	r.HandleFunc("/events", t.sseServer.ServeHTTP)
+	r.HandleFunc(systems.EVENTSPATH, t.sseServer.ServeHTTP)
 
 	t.Handler = r
 
