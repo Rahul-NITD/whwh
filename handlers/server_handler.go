@@ -11,20 +11,16 @@ import (
 type TesterServerHandler struct {
 	http.Handler
 	testerServer *server.TesterServer
-	deferhome    func()
 }
 
-func NewTesterServerHandler(deferhome ...func()) *TesterServerHandler {
+func NewTesterServerHandler(deferfunc ...func()) *TesterServerHandler {
 
 	t := &TesterServerHandler{}
-	if len(deferhome) > 0 {
-		t.deferhome = deferhome[0]
-	}
 
 	t.testerServer = server.NewTesterServer()
 
 	r := http.NewServeMux()
-	r.HandleFunc(systems.HOMEPATH, t.homeHandler)
+	r.HandleFunc(systems.HOMEPATH, t.homeHandler(deferfunc...))
 	r.HandleFunc(systems.HEALTHPATH, t.healthHandler)
 	r.HandleFunc(systems.CREATESTREAMPATH, t.createStreamHandler)
 	r.HandleFunc(systems.EVENTSPATH, t.testerServer.EventServe())
@@ -34,16 +30,23 @@ func NewTesterServerHandler(deferhome ...func()) *TesterServerHandler {
 	return t
 }
 
-func (t *TesterServerHandler) homeHandler(w http.ResponseWriter, r *http.Request) {
+func (t *TesterServerHandler) homeHandler(deferfunc ...func()) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 
-	sid := r.URL.Query().Get("stream")
+		sid := r.URL.Query().Get("stream")
 
-	err := t.testerServer.PublishRequest(sid, r)
-	if err != nil {
-		println("Error in Publishing,", err)
+		err := t.testerServer.PublishRequest(sid, r)
+		if err != nil {
+			println("Error in Publishing,", err)
+		}
+		defer dodefers(deferfunc...)
 	}
+}
 
-	defer t.deferhome()
+func dodefers(deferfunc ...func()) {
+	for _, f := range deferfunc {
+		f()
+	}
 }
 
 func (t *TesterServerHandler) createStreamHandler(w http.ResponseWriter, r *http.Request) {
