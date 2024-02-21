@@ -9,11 +9,12 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/Rahul-NITD/whwh/systems"
 	"github.com/r3labs/sse/v2"
 )
 
 func ClientConnect(serverUrl string, hookUrl string) (*sse.Client, string, error) {
-	res, err := http.Get(serverUrl + "/createstream")
+	res, err := http.Get(serverUrl + systems.CREATESTREAMPATH)
 	if err != nil {
 		return nil, "", err
 	}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Rahul-NITD/whwh/systems"
 	"github.com/google/uuid"
 	"github.com/r3labs/sse/v2"
 )
@@ -30,7 +31,7 @@ func NewTesterServerHandler(deferhome ...func()) *TesterServerHandler {
 
 	r.HandleFunc("/", t.homeHandler)
 	r.HandleFunc("/health", t.healthHandler)
-	r.HandleFunc("/createstream", t.createStreamHandler)
+	r.HandleFunc(systems.CREATESTREAMPATH, t.createStreamHandler)
 	r.HandleFunc("/events", t.sseServer.ServeHTTP)
 
 	t.Handler = r
