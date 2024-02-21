@@ -35,7 +35,12 @@ func ClientConnect(serverUrl string, hookUrl string) (*sse.Client, string, error
 func ClientSubscribe(client *sse.Client, sid string, hookUrl string, deferfunc ...func()) (unsubscribe func(), err error) {
 
 	cxt, cancel := context.WithCancel(context.Background())
-	go client.SubscribeWithContext(cxt, sid, func(msg *sse.Event) {
+	go client.SubscribeWithContext(cxt, sid, createSubscribeFunc(hookUrl, deferfunc...))
+	return cancel, nil
+}
+
+func createSubscribeFunc(hookUrl string, deferfunc ...func()) func(msg *sse.Event) {
+	return func(msg *sse.Event) {
 		defer performDefers(deferfunc...)
 		req, err := parseIncomingRequest(msg.Data)
 		if err != nil {
@@ -53,8 +58,7 @@ func ClientSubscribe(client *sse.Client, sid string, hookUrl string, deferfunc .
 			println("Err in reading request, ", err.Error())
 			return
 		}
-	})
-	return cancel, nil
+	}
 }
 
 func parseIncomingRequest(data []byte) (*http.Request, error) {
