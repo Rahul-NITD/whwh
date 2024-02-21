@@ -37,9 +37,7 @@ func ClientSubscribe(client *sse.Client, sid string, hookUrl string, deferfunc .
 	cxt, cancel := context.WithCancel(context.Background())
 	go client.SubscribeWithContext(cxt, sid, func(msg *sse.Event) {
 		defer performDefers(deferfunc...)
-		var dec []byte
-		json.Unmarshal(msg.Data, &dec)
-		req, err := http.ReadRequest(bufio.NewReader(bytes.NewReader(dec)))
+		req, err := parseIncomingRequest(msg.Data)
 		if err != nil {
 			println("Err in reading request, ", err.Error())
 			return
@@ -57,6 +55,16 @@ func ClientSubscribe(client *sse.Client, sid string, hookUrl string, deferfunc .
 		}
 	})
 	return cancel, nil
+}
+
+func parseIncomingRequest(data []byte) (*http.Request, error) {
+	var dec []byte
+	json.Unmarshal(data, &dec)
+	req, err := http.ReadRequest(bufio.NewReader(bytes.NewReader(dec)))
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
 }
 
 func performDefers(deferfunc ...func()) {
