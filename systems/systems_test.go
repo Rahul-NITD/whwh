@@ -19,7 +19,7 @@ func TestSystemDocker(t *testing.T) {
 
 	req := testcontainers.ContainerRequest{
 		FromDockerfile: testcontainers.FromDockerfile{
-			Context:       "../../.",
+			Context:       "../.",
 			Dockerfile:    "./drivers/Dockerfile",
 			PrintBuildLog: true,
 		},
