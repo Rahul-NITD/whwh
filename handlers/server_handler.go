@@ -7,14 +7,13 @@ import (
 	"net/http"
 
 	"github.com/Rahul-NITD/whwh/systems"
-	"github.com/google/uuid"
-	"github.com/r3labs/sse/v2"
+	"github.com/Rahul-NITD/whwh/systems/server"
 )
 
 type TesterServerHandler struct {
 	http.Handler
-	sseServer *sse.Server
-	deferhome func()
+	testerServer *server.TesterServer
+	deferhome    func()
 }
 
 func NewTesterServerHandler(deferhome ...func()) *TesterServerHandler {
@@ -24,15 +23,13 @@ func NewTesterServerHandler(deferhome ...func()) *TesterServerHandler {
 		t.deferhome = deferhome[0]
 	}
 
+	t.testerServer = server.NewTesterServer()
+
 	r := http.NewServeMux()
-
-	t.sseServer = sse.New()
-	t.sseServer.AutoReplay = false
-
 	r.HandleFunc(systems.HOMEPATH, t.homeHandler)
 	r.HandleFunc(systems.HEALTHPATH, t.healthHandler)
 	r.HandleFunc(systems.CREATESTREAMPATH, t.createStreamHandler)
-	r.HandleFunc(systems.EVENTSPATH, t.sseServer.ServeHTTP)
+	r.HandleFunc(systems.EVENTSPATH, t.testerServer.EventServe())
 
 	t.Handler = r
 
@@ -43,25 +40,24 @@ func (t *TesterServerHandler) homeHandler(w http.ResponseWriter, r *http.Request
 
 	sid := r.URL.Query().Get("stream")
 
-	var buf bytes.Buffer
-	r.Write(&buf)
-
-	val, err := json.Marshal(buf.Bytes())
+	val, err := marshalRequest(r)
 	if err != nil {
 		println("Error in Marshalling,", err)
 	}
 
-	t.sseServer.Publish(sid, &sse.Event{
-		Data: val,
-	})
+	t.testerServer.Publish(sid, val)
 
 	defer t.deferhome()
 }
 
+func marshalRequest(r *http.Request) ([]byte, error) {
+	var buf bytes.Buffer
+	r.Write(&buf)
+	return json.Marshal(buf.Bytes())
+}
+
 func (t *TesterServerHandler) createStreamHandler(w http.ResponseWriter, r *http.Request) {
-	sid := uuid.NewString()
-	t.sseServer.CreateStream(sid)
-	fmt.Fprint(w, sid)
+	fmt.Fprint(w, t.testerServer.CreateStream())
 }
 
 func (t *TesterServerHandler) healthHandler(w http.ResponseWriter, r *http.Request) {
