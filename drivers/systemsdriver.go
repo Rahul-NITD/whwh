@@ -1,27 +1,20 @@
 package drivers
 
 import (
-	"bufio"
 	"bytes"
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
-	"sync"
 
 	"github.com/Rahul-NITD/whwh/handlers"
+	"github.com/Rahul-NITD/whwh/systems/client"
 	"github.com/Rahul-NITD/whwh/systems/hook"
 	sse "github.com/r3labs/sse/v2"
 )
 
 type SysDriver struct {
-	serverUrl string
-	hookUrl   string
-	mu        sync.Mutex
-	done      chan struct{}
+	done chan struct{}
 }
 
 func NewSysDriver() *SysDriver {
@@ -33,7 +26,7 @@ func NewSysDriver() *SysDriver {
 // TesterServerStart implements specs.Tester.
 func (d *SysDriver) TesterServerStart() (serverUrl string, shutdown func(), err error) {
 	handler := handlers.NewTesterServerHandler(func() {
-		<-d.done
+		<-d.done // waiting for client to finish their request to hook. Just for tests.
 	})
 	svr := httptest.NewServer(handler)
 	return svr.URL, svr.Close, nil
@@ -47,13 +40,13 @@ func (d *SysDriver) HookServerStart(outputBuffer *bytes.Buffer) (hookUrl string,
 
 // HealthCheck implements specs.Tester.
 func (*SysDriver) HealthCheck(serverUrl string, hookUrl string) error {
-	if err := makeGetRequest(serverUrl); err != nil {
+	if err := makeHealthRequest(serverUrl); err != nil {
 		return err
 	}
 	return nil
 }
 
-func makeGetRequest(url string) error {
+func makeHealthRequest(url string) error {
 	res, err := http.Get(url + "/health")
 	if err != nil {
 		return fmt.Errorf("could not make request to server, %s, %s", url+"/health", err.Error())
@@ -74,54 +67,12 @@ func makeGetRequest(url string) error {
 
 // ClientConnect implements specs.Tester.
 func (s *SysDriver) ClientConnect(serverUrl string, hookUrl string) (*sse.Client, string, error) {
-	s.serverUrl = serverUrl
-	s.hookUrl = hookUrl
-
-	res, err := http.Get(serverUrl + "/createstream")
-	if err != nil {
-		return nil, "", err
-	}
-	sid, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, "", err
-	}
-	cli := sse.NewClient(serverUrl + "/events")
-	return cli, string(sid), nil
+	return client.ClientConnect(serverUrl, hookUrl)
 }
 
 // ClientSubscribe implements specs.Tester.
-func (s *SysDriver) ClientSubscribe(client *sse.Client, sid string, hookUrl string) (unsubscribe func(), err error) {
-
-	cxt, cancel := context.WithCancel(context.Background())
-	go client.SubscribeWithContext(cxt, sid, func(msg *sse.Event) {
-
-		var dec []byte
-		json.Unmarshal(msg.Data, &dec)
-		req, err := http.ReadRequest(bufio.NewReader(bytes.NewReader(dec)))
-		if err != nil {
-			println("Err in reading request, ", err.Error())
-			close(s.done)
-			return
-		}
-		req.URL, err = url.Parse(hookUrl)
-		req.Host = req.URL.Host
-		if err != nil {
-			println("Err in reading request, ", err.Error())
-			close(s.done)
-			return
-		}
-
-		req.RequestURI = ""
-
-		_, err = http.DefaultClient.Do(req)
-		if err != nil {
-			println("Err in reading request, ", err.Error())
-			close(s.done)
-			return
-		}
-		close(s.done)
-	})
-	return cancel, nil
+func (s *SysDriver) ClientSubscribe(clientD *sse.Client, sid string, hookUrl string) (unsubscribe func(), err error) {
+	return client.ClientSubscribe(clientD, sid, hookUrl, func() { close(s.done) }) // To notify homehandler that out request is complete
 }
 
 // MakeRequest implements specs.Tester.
