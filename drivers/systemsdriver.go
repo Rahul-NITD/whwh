@@ -28,7 +28,6 @@ func NewSysDriver() *SysDriver {
 func (d *SysDriver) TesterServerStart() (serverUrl string, shutdown func(), err error) {
 	handler := handlers.NewTesterServerHandler(func() {
 		<-d.done // waiting for client to finish their request to hook. Just for tests.
-		<-d.done // waiting for client to finish their request to hook. Just for tests.
 	})
 	svr := httptest.NewServer(handler)
 	return svr.URL, svr.Close, nil
