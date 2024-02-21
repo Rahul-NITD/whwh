@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -40,20 +38,12 @@ func (t *TesterServerHandler) homeHandler(w http.ResponseWriter, r *http.Request
 
 	sid := r.URL.Query().Get("stream")
 
-	val, err := marshalRequest(r)
+	err := t.testerServer.PublishRequest(sid, r)
 	if err != nil {
-		println("Error in Marshalling,", err)
+		println("Error in Publishing,", err)
 	}
 
-	t.testerServer.Publish(sid, val)
-
 	defer t.deferhome()
-}
-
-func marshalRequest(r *http.Request) ([]byte, error) {
-	var buf bytes.Buffer
-	r.Write(&buf)
-	return json.Marshal(buf.Bytes())
 }
 
 func (t *TesterServerHandler) createStreamHandler(w http.ResponseWriter, r *http.Request) {
