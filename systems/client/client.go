@@ -40,7 +40,7 @@ func ClientSubscribe(client *sse.Client, sid string, hookUrl string, deferfunc .
 
 func createSubscribeFunc(hookUrl string, deferfunc ...func()) func(msg *sse.Event) {
 	return func(msg *sse.Event) {
-		defer performDefers(deferfunc...)
+		defer dodefers(deferfunc...)
 		req, err := parseIncomingRequest(msg.Data)
 		if err != nil {
 			println("Err in reading request, ", err.Error())
@@ -70,7 +70,7 @@ func parseIncomingRequest(data []byte) (*http.Request, error) {
 	return req, nil
 }
 
-func performDefers(deferfunc ...func()) {
+func dodefers(deferfunc ...func()) {
 	for _, f := range deferfunc {
 		f()
 	}
