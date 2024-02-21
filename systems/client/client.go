@@ -46,26 +46,29 @@ func ClientSubscribe(client *sse.Client, sid string, hookUrl string, deferfunc .
 		req, err := http.ReadRequest(bufio.NewReader(bytes.NewReader(dec)))
 		if err != nil {
 			println("Err in reading request, ", err.Error())
-			// close(s.done)
 			return
 		}
-		req.URL, err = url.Parse(hookUrl)
-		req.Host = req.URL.Host
+		req, err = sanitizeIncomingRequest(req, hookUrl)
 		if err != nil {
-			println("Err in reading request, ", err.Error())
-			// close(s.done)
+			println("Err in sanitizing request, ", err.Error())
 			return
 		}
-
-		req.RequestURI = ""
 
 		_, err = http.DefaultClient.Do(req)
 		if err != nil {
 			println("Err in reading request, ", err.Error())
-			// close(s.done)
 			return
 		}
-		// close(s.done)
 	})
 	return cancel, nil
+}
+
+func sanitizeIncomingRequest(req *http.Request, hookUrl string) (nreq *http.Request, err error) {
+	req.URL, err = url.Parse(hookUrl)
+	req.Host = req.URL.Host
+	if err != nil {
+		return nil, err
+	}
+	req.RequestURI = ""
+	return req, nil
 }

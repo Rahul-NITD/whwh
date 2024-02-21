@@ -73,7 +73,7 @@ func (s *SysDriver) ClientConnect(serverUrl string, hookUrl string) (*sse.Client
 
 // ClientSubscribe implements specs.Tester.
 func (s *SysDriver) ClientSubscribe(clientD *sse.Client, sid string, hookUrl string) (unsubscribe func(), err error) {
-	return client.ClientSubscribe(clientD, sid, hookUrl, func() { close(s.done) }) // To notify homehandler that out request is complete
+	return client.ClientSubscribe(clientD, sid, hookUrl, func() { close(s.done) }) // To notify homehandler that request is complete
 }
 
 // MakeRequest implements specs.Tester.
