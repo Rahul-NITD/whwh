@@ -36,11 +36,7 @@ func ClientSubscribe(client *sse.Client, sid string, hookUrl string, deferfunc .
 
 	cxt, cancel := context.WithCancel(context.Background())
 	go client.SubscribeWithContext(cxt, sid, func(msg *sse.Event) {
-		defer func() {
-			for _, f := range deferfunc {
-				f()
-			}
-		}()
+		defer performDefers(deferfunc...)
 		var dec []byte
 		json.Unmarshal(msg.Data, &dec)
 		req, err := http.ReadRequest(bufio.NewReader(bytes.NewReader(dec)))
@@ -61,6 +57,12 @@ func ClientSubscribe(client *sse.Client, sid string, hookUrl string, deferfunc .
 		}
 	})
 	return cancel, nil
+}
+
+func performDefers(deferfunc ...func()) {
+	for _, f := range deferfunc {
+		f()
+	}
 }
 
 func sanitizeIncomingRequest(req *http.Request, hookUrl string) (nreq *http.Request, err error) {
