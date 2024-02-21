@@ -13,7 +13,6 @@ import (
 )
 
 func ClientConnect(serverUrl string, hookUrl string) (*sse.Client, string, error) {
-
 	res, err := http.Get(serverUrl + "/createstream")
 	if err != nil {
 		return nil, "", err
@@ -29,7 +28,6 @@ func ClientConnect(serverUrl string, hookUrl string) (*sse.Client, string, error
 }
 
 func ClientSubscribe(client *sse.Client, sid string, hookUrl string, deferfunc ...func()) (unsubscribe func(), err error) {
-
 	cxt, cancel := context.WithCancel(context.Background())
 	go client.SubscribeWithContext(cxt, sid, createSubscribeFunc(hookUrl, deferfunc...))
 	return cancel, nil
@@ -51,7 +49,7 @@ func createSubscribeFunc(hookUrl string, deferfunc ...func()) func(msg *sse.Even
 
 		_, err = http.DefaultClient.Do(req)
 		if err != nil {
-			println("Err in reading request, ", err.Error())
+			println("Err in making request, ", err.Error())
 			return
 		}
 	}
