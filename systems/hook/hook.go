@@ -2,6 +2,7 @@ package hook
 
 import (
 	"net/http"
+	"os"
 	"sync"
 )
 
@@ -14,6 +15,13 @@ type WriteReset interface {
 	Write(p []byte) (n int, err error)
 	Reset()
 }
+
+type OsStdoutAdapter struct{}
+
+func (*OsStdoutAdapter) Write(p []byte) (n int, err error) {
+	return os.Stdout.Write(p)
+}
+func (*OsStdoutAdapter) Reset() {}
 
 func NewHook(ob WriteReset) *Hook {
 	r := http.NewServeMux()
