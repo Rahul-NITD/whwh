@@ -12,10 +12,6 @@ import (
 	"github.com/r3labs/sse/v2"
 )
 
-type TesterClient struct {
-	deferfunc func()
-}
-
 func ClientConnect(serverUrl string, hookUrl string) (*sse.Client, string, error) {
 
 	res, err := http.Get(serverUrl + "/createstream")
