@@ -19,4 +19,3 @@ WebhookWormhole in your solution in testing out your webhooks locally.
       ```
 
 For any suggestions and reviews, please reach out to [whwh.queries@gmail.com](mailto:whwh.queries@gmail.com)
-<!-- A small comment -->
