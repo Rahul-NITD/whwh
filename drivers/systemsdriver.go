@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 
 	"github.com/Rahul-NITD/whwh/handlers"
 	"github.com/Rahul-NITD/whwh/systems"
@@ -15,7 +16,8 @@ import (
 )
 
 type SysDriver struct {
-	done chan struct{}
+	done      chan struct{}
+	serverUrl url.URL
 }
 
 func NewSysDriver() *SysDriver {
@@ -26,10 +28,14 @@ func NewSysDriver() *SysDriver {
 
 // TesterServerStart implements specs.Tester.
 func (d *SysDriver) TesterServerStart() (serverUrl string, shutdown func(), err error) {
-	handler := handlers.NewTesterServerHandler(func() {
-		<-d.done // waiting for client to finish their request to hook. Just for tests.
-	})
+	handler := handlers.NewTesterServerHandler()
 	svr := httptest.NewServer(handler)
+	svurl, err := url.Parse(svr.URL)
+	if err != nil {
+		svr.Close()
+		return "", func() {}, err
+	}
+	d.serverUrl = *svurl
 	return svr.URL, svr.Close, nil
 }
 
@@ -77,6 +83,10 @@ func (s *SysDriver) ClientSubscribe(clientD *sse.Client, sid string, hookUrl str
 }
 
 // MakeRequest implements specs.Tester.
-func (*SysDriver) MakeRequest(req *http.Request) (res *http.Response, err error) {
-	return http.DefaultClient.Do(req)
+func (d *SysDriver) MakeRequest(req *http.Request) (res *http.Response, err error) {
+	res, err = http.DefaultClient.Do(req)
+	if d.serverUrl.Host == req.Host {
+		<-d.done
+	}
+	return
 }
