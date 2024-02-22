@@ -18,11 +18,13 @@ import (
 type SysDriver struct {
 	done      chan struct{}
 	serverUrl url.URL
+	isServer  bool
 }
 
 func NewSysDriver() *SysDriver {
 	return &SysDriver{
-		done: make(chan struct{}),
+		done:     make(chan struct{}),
+		isServer: false,
 	}
 }
 
@@ -30,13 +32,20 @@ func NewSysDriver() *SysDriver {
 func (d *SysDriver) TesterServerStart() (serverUrl string, shutdown func(), err error) {
 	handler := handlers.NewTesterServerHandler()
 	svr := httptest.NewServer(handler)
-	svurl, err := url.Parse(svr.URL)
-	if err != nil {
+	if err := d.InitServer(svr.URL); err != nil {
 		svr.Close()
 		return "", func() {}, err
 	}
-	d.serverUrl = *svurl
 	return svr.URL, svr.Close, nil
+}
+
+func (d *SysDriver) InitServer(svrURL string) error {
+	svurl, err := url.Parse(svrURL)
+	if err != nil {
+		return err
+	}
+	d.serverUrl = *svurl
+	return nil
 }
 
 // HookServerStart implements specs.Tester.
@@ -85,8 +94,9 @@ func (s *SysDriver) ClientSubscribe(clientD *sse.Client, sid string, hookUrl str
 // MakeRequest implements specs.Tester.
 func (d *SysDriver) MakeRequest(req *http.Request) (res *http.Response, err error) {
 	res, err = http.DefaultClient.Do(req)
-	if d.serverUrl.Host == req.Host {
+	if d.isServer {
 		<-d.done
 	}
+	d.isServer = true
 	return
 }

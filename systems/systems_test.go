@@ -24,7 +24,7 @@ func TestSystemDocker(t *testing.T) {
 	req := testcontainers.ContainerRequest{
 		FromDockerfile: testcontainers.FromDockerfile{
 			Context:       "../.",
-			Dockerfile:    "./drivers/Dockerfile",
+			Dockerfile:    "./Dockerfile",
 			PrintBuildLog: true,
 		},
 		ExposedPorts: []string{"8000:8000"},
@@ -43,5 +43,5 @@ func TestSystemDocker(t *testing.T) {
 		assert.NoError(t, container.Terminate(cxt))
 	})
 
-	specs.TesterSpecification(t, drivers.DocDriver{})
+	specs.TesterSpecification(t, drivers.NewDockerDriver("http://localhost:8000"))
 }

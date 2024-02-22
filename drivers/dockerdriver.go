@@ -7,34 +7,47 @@ import (
 	sse "github.com/r3labs/sse/v2"
 )
 
-type DocDriver struct{}
+type DockerDriver struct {
+	ServerUrl  string
+	baseDriver *SysDriver
+}
+
+func NewDockerDriver(url string) *DockerDriver {
+	return &DockerDriver{
+		ServerUrl:  url,
+		baseDriver: NewSysDriver(),
+	}
+}
 
 // TesterServerStart implements specs.Tester.
-func (DocDriver) TesterServerStart() (serverUrl string, shutdown func(), err error) {
-	panic("unimplemented")
+func (d *DockerDriver) TesterServerStart() (serverUrl string, shutdown func(), err error) {
+	if err := d.baseDriver.InitServer(serverUrl); err != nil {
+		return "", func() {}, err
+	}
+	return d.ServerUrl, func() {}, nil
 }
 
 // HookServerStart implements specs.Tester.
-func (DocDriver) HookServerStart(outputBuffer *bytes.Buffer) (hookUrl string, shutdown func(), err error) {
-	panic("unimplemented")
+func (d *DockerDriver) HookServerStart(outputBuffer *bytes.Buffer) (hookUrl string, shutdown func(), err error) {
+	return d.baseDriver.HookServerStart(outputBuffer)
 }
 
 // HealthCheck implements specs.Tester.
-func (DocDriver) HealthCheck(serverUrl string, hookUrl string) error {
-	panic("unimplemented")
+func (d *DockerDriver) HealthCheck(serverUrl string, hookUrl string) error {
+	return d.baseDriver.HealthCheck(serverUrl, hookUrl)
 }
 
 // ClientConnect implements specs.Tester.
-func (DocDriver) ClientConnect(eventUrl string, hookUrl string) (client *sse.Client, sid string, err error) {
-	panic("unimplemented")
+func (d *DockerDriver) ClientConnect(serverUrl string, hookUrl string) (client *sse.Client, sid string, err error) {
+	return d.baseDriver.ClientConnect(serverUrl, hookUrl)
 }
 
 // ClientSubscribe implements specs.Tester.
-func (DocDriver) ClientSubscribe(client *sse.Client, sid string, hookUrl string) (unsubscribe func(), err error) {
-	panic("unimplemented")
+func (d *DockerDriver) ClientSubscribe(client *sse.Client, sid string, hookUrl string) (unsubscribe func(), err error) {
+	return d.baseDriver.ClientSubscribe(client, sid, hookUrl)
 }
 
 // MakeRequest implements specs.Tester.
-func (DocDriver) MakeRequest(req *http.Request) (res *http.Response, err error) {
-	panic("unimplemented")
+func (d *DockerDriver) MakeRequest(req *http.Request) (res *http.Response, err error) {
+	return d.baseDriver.MakeRequest(req)
 }
