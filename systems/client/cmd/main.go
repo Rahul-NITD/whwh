@@ -8,21 +8,10 @@ import (
 	"syscall"
 
 	"github.com/Rahul-NITD/whwh/systems/client"
-	"github.com/spf13/viper"
 )
 
 func main() {
-	viper.SetConfigFile(".env")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	serverUrl, ok := viper.Get("TESTERSERVER_URL").(string)
-	if !ok {
-		log.Fatalln("Could not get TESTERSERVER_URL")
-	}
-
+	serverUrl := "https://webhookwormhole-latest.onrender.com"
 	hookUrl := flag.String("h", "http://localhost:3000", "specify the hook url, defaults to localhost:3000")
 	flag.Parse()
 
