@@ -17,6 +17,10 @@ func TestSystem(t *testing.T) {
 
 func TestSystemDocker(t *testing.T) {
 
+	if testing.Short() {
+		t.Skip()
+	}
+
 	req := testcontainers.ContainerRequest{
 		FromDockerfile: testcontainers.FromDockerfile{
 			Context:       "../.",
