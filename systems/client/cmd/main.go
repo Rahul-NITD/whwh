@@ -24,12 +24,13 @@ func main() {
 	}
 
 	hookUrl := flag.String("h", "http://localhost:3000", "specify the hook url, defaults to localhost:3000")
+	flag.Parse()
 
 	c, sid, err := client.ClientConnect(serverUrl, *hookUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("All data to %s?stream=%s will be forwarded to %s", serverUrl, sid, *hookUrl)
+	log.Printf("All data to %s?stream=%s will be forwarded to %q", serverUrl, sid, *hookUrl)
 	unsubscribe, err := client.ClientSubscribe(c, sid, *hookUrl)
 	if err != nil {
 		log.Fatal(err)
