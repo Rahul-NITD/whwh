@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Rahul-NITD/whwh/systems"
-	"github.com/Rahul-NITD/whwh/systems/server"
+	"github.com/aargeee/whwh/systems"
+	"github.com/aargeee/whwh/systems/server"
 )
 
 type TesterServerHandler struct {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Rahul-NITD/whwh/drivers"
-	"github.com/Rahul-NITD/whwh/specs"
+	"github.com/aargeee/whwh/drivers"
+	"github.com/aargeee/whwh/specs"
 	"github.com/alecthomas/assert/v2"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"

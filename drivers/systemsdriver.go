@@ -8,10 +8,10 @@ import (
 	"net/http/httptest"
 	"net/url"
 
-	"github.com/Rahul-NITD/whwh/handlers"
-	"github.com/Rahul-NITD/whwh/systems"
-	"github.com/Rahul-NITD/whwh/systems/client"
-	"github.com/Rahul-NITD/whwh/systems/hook"
+	"github.com/aargeee/whwh/handlers"
+	"github.com/aargeee/whwh/systems"
+	"github.com/aargeee/whwh/systems/client"
+	"github.com/aargeee/whwh/systems/hook"
 	sse "github.com/r3labs/sse/v2"
 )
 
