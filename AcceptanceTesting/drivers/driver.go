@@ -2,23 +2,24 @@ package drivers
 
 import (
 	"net/http"
+	"testing"
 
 	"github.com/aargeee/whwh/AcceptanceTesting/specs"
 )
 
 type ATDriver struct{}
 
-// Dispatch implements specs.WebhookTesterSubject.
-func (ATDriver) Dispatch(req *http.Request, hook_url string) (res *http.Response, err error) {
-	return nil, nil
-}
-
 // ConnectClientAndServer implements specs.WebhookTesterSubject.
-func (ATDriver) ConnectClientAndServer(chanID string) (client specs.Client, err error) {
-	return nil, nil
+func (ATDriver) ConnectClientAndServer(t *testing.T, chanID string) (client specs.Client) {
+	panic("unimplemented")
 }
 
 // CreateChannel implements specs.WebhookTesterSubject.
-func (ATDriver) CreateChannel() (chanID string, err error) {
-	return "", nil
+func (ATDriver) CreateChannel(t *testing.T) (chanID string) {
+	panic("unimplemented")
+}
+
+// Dispatch implements specs.WebhookTesterSubject.
+func (ATDriver) Dispatch(t *testing.T, req *http.Request, hook_url string) (res *http.Response) {
+	panic("unimplemented")
 }

@@ -12,41 +12,42 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type Client interface {
-}
+type Client interface{}
 
 type WebhookTesterSubject interface {
-	CreateChannel() (chanID string, err error)
-	ConnectClientAndServer(chanID string) (client Client, err error)
-	Dispatch(req *http.Request, hook_url string) (res *http.Response, err error)
+	CreateChannel(t *testing.T) (chanID string)
+	ConnectClientAndServer(t *testing.T, chanID string) (client Client)
+	Dispatch(t *testing.T, req *http.Request, hook_url string) (res *http.Response)
 }
 
 func TestWebhookTester(t *testing.T, subject WebhookTesterSubject) {
-
-	reqTemplate := postNilBody
-
 	hook_url, close := SpinHelperHook()
 	defer close()
 
-	chanID, err := subject.CreateChannel()
-	assert.NoError(t, err, "Error while creating Channel")
+	chanID := subject.CreateChannel(t)
+	subject.ConnectClientAndServer(t, chanID)
+	req := mustBuildRequest(t, hook_url, postNilBody)
+	assert.Equal(t, "REGISTERED", RequestAndExtract(t, req))
+	assert.Equal(t, "SUCCESS", DispatchAndExtract(t, req, subject, hook_url))
+}
 
-	_, err = subject.ConnectClientAndServer(chanID)
-	assert.NoError(t, err, "Couldn't Connect client to server")
+func mustBuildRequest(t *testing.T, url string, builder func(string) (*http.Request, error)) *http.Request {
+	req, err := buildRequest(url, builder)
+	assert.NoError(t, err, "Could not build request")
+	return req
+}
 
-	req, err := buildRequest(hook_url, reqTemplate)
-	assert.NoError(t, err, "Could not build request using given template")
-
-	hres, err := request(req.Clone(context.Background()), reqTemplate)
+func RequestAndExtract(t *testing.T, req *http.Request) string {
+	hres, err := request(req.Clone(context.Background()))
 	assert.NoError(t, err, "Error while executing request")
+	return string(hres)
+}
 
-	whwhres, err := subject.Dispatch(req.Clone(context.Background()), hook_url)
-	assert.NoError(t, err, "Error while subject dispatch")
-
+func DispatchAndExtract(t *testing.T, req *http.Request, subject WebhookTesterSubject, hook_url string) string {
+	whwhres := subject.Dispatch(t, req.Clone(context.Background()), hook_url)
 	wres, err := ExtractBodyFromRes(whwhres)
 	assert.NoError(t, err, "Error while extracting body from res")
-
-	assert.Equal(t, hres, wres)
+	return string(wres)
 }
 
 func postNilBody(url string) (*http.Request, error) {
@@ -57,7 +58,7 @@ func buildRequest(url string, builder func(string) (*http.Request, error)) (*htt
 	return builder(url)
 }
 
-func request(req *http.Request, builder func(string) (*http.Request, error)) ([]byte, error) {
+func request(req *http.Request) ([]byte, error) {
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error while executing request, %w", err)
