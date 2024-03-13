@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,7 @@ func TestWebhookTester(t *testing.T, subject WebhookTesterSubject) {
 
 	reqTemplate := postNilBody
 
-	hook_url, close := spinEchoHook()
+	hook_url, close := SpinHelperHook()
 	defer close()
 
 	chanID, err := subject.CreateChannel()
@@ -42,7 +43,7 @@ func TestWebhookTester(t *testing.T, subject WebhookTesterSubject) {
 	whwhres, err := subject.Dispatch(req.Clone(context.Background()), hook_url)
 	assert.NoError(t, err, "Error while subject dispatch")
 
-	wres, err := extractBodyFromRes(whwhres)
+	wres, err := ExtractBodyFromRes(whwhres)
 	assert.NoError(t, err, "Error while extracting body from res")
 
 	assert.Equal(t, hres, wres)
@@ -61,22 +62,34 @@ func request(req *http.Request, builder func(string) (*http.Request, error)) ([]
 	if err != nil {
 		return nil, fmt.Errorf("Error while executing request, %w", err)
 	}
-	return extractBodyFromRes(res)
+	return ExtractBodyFromRes(res)
 }
 
-func extractBodyFromRes(res *http.Response) ([]byte, error) {
+func ExtractBodyFromRes(res *http.Response) ([]byte, error) {
 	defer res.Body.Close()
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, fmt.Errorf("Error while reading response body %w", err)
+		return nil, fmt.Errorf("error while reading response body %w", err)
 	}
 	return resBody, nil
 }
 
-func spinEchoHook() (url string, close func()) {
+func SpinHelperHook() (url string, close func()) {
+	var rgot *http.Request
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
-		fmt.Fprint(w, r)
+		if rgot != nil {
+
+			if reflect.DeepEqual(rgot, r.Clone(context.Background())) {
+				fmt.Fprint(w, "SUCCESS")
+			} else {
+				fmt.Fprint(w, "FAILURE")
+			}
+
+		} else {
+			rgot = r.Clone(context.Background())
+			fmt.Fprint(w, "REGISTERED")
+		}
 	}))
 
 	return svr.URL, svr.Close
