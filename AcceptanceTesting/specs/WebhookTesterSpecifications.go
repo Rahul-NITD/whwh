@@ -60,7 +60,7 @@ func buildRequest(url string, builder func(string) (*http.Request, error)) (*htt
 func request(req *http.Request, builder func(string) (*http.Request, error)) ([]byte, error) {
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("Error while executing request, %w", err)
+		return nil, fmt.Errorf("error while executing request, %w", err)
 	}
 	return ExtractBodyFromRes(res)
 }
@@ -83,7 +83,9 @@ func SpinHelperHook() (url string, close func()) {
 			if reflect.DeepEqual(rgot, r.Clone(context.Background())) {
 				fmt.Fprint(w, "SUCCESS")
 			} else {
-				fmt.Fprint(w, "FAILURE")
+				fmt.Fprintln(w, "FAILURE")
+				fmt.Fprintln(w, *rgot)
+				fmt.Fprintln(w, *r)
 			}
 
 		} else {

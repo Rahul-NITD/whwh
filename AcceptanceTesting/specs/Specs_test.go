@@ -14,7 +14,6 @@ func TestEchoHook(t *testing.T) {
 	defer cancel()
 	req, err := http.NewRequest(http.MethodPost, url, http.NoBody)
 	assert.NoError(t, err, "Error in building request")
-
 	MakeRequestAssertString(t, req.Clone(context.Background()), "REGISTERED")
 	MakeRequestAssertString(t, req.Clone(context.Background()), "SUCCESS")
 }
