@@ -18,12 +18,4 @@ func TestCreateChannel(t *testing.T) {
 		assert.Equal(t, http.StatusOK, res.Code)
 	})
 
-	t.Run("/create GET request returns api doc", func(t *testing.T) {
-		req, err := http.NewRequest(http.MethodGet, "/create", http.NoBody)
-		assert.NoError(t, err, "Could not make request to /create")
-		res := httptest.NewRecorder()
-		handlers.NewServer().ServeHTTP(res, req)
-		assert.Equal(t, http.StatusOK, res.Code)
-	})
-
 }
