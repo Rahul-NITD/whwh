@@ -19,8 +19,6 @@ func NewServer() http.Handler {
 				Response: whwh.ChannelIDResponse{ChannelID: "KJFNGAB7DFGDSGF7GFS7GF8S7"},
 			}
 			json.NewEncoder(w).Encode(res)
-		case http.MethodGet:
-			json.NewEncoder(w).Encode(whwh.CreateChannelDoc)
 		default:
 			http.Error(w, "requested method not allowed", http.StatusMethodNotAllowed)
 		}
