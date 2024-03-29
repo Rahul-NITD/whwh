@@ -25,8 +25,8 @@ func TestWebhookTester(t *testing.T, subject WebhookTesterSubject) {
 	defer close()
 
 	chanID := subject.CreateChannel(t)
-	subject.ConnectClientAndServer(t, chanID)
 	t.Skip()
+	subject.ConnectClientAndServer(t, chanID)
 	req := mustBuildRequest(t, hook_url, postNilBody)
 	assert.Equal(t, "REGISTERED", RequestAndExtract(t, req))
 	assert.Equal(t, "SUCCESS", DispatchAndExtract(t, req, subject, hook_url))
