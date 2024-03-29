@@ -39,8 +39,8 @@ func (d *DockerDriver) HealthCheck() error {
 }
 
 // ClientConnect implements specs.Tester.
-func (d *DockerDriver) ClientConnect(serverUrl string, hookUrl string) (client *sse.Client, sid string, err error) {
-	return d.baseDriver.ClientConnect(serverUrl, hookUrl)
+func (d *DockerDriver) ClientConnect(hookUrl string) (client *sse.Client, sid string, err error) {
+	return d.baseDriver.ClientConnect(hookUrl)
 }
 
 // ClientSubscribe implements specs.Tester.

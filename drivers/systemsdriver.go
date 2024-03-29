@@ -69,8 +69,8 @@ func makeHealthRequest(url string) error {
 }
 
 // ClientConnect implements specs.Tester.
-func (s *SysDriver) ClientConnect(serverUrl string, hookUrl string) (*sse.Client, string, error) {
-	return client.ClientConnect(serverUrl, hookUrl)
+func (s *SysDriver) ClientConnect(hookUrl string) (*sse.Client, string, error) {
+	return client.ClientConnect(s.serverUrl, hookUrl)
 }
 
 // ClientSubscribe implements specs.Tester.

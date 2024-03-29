@@ -22,7 +22,7 @@ type Tester interface {
 
 	HealthCheck() error
 
-	ClientConnect(eventUrl, hookUrl string) (client *sse.Client, sid string, err error)
+	ClientConnect(hookUrl string) (client *sse.Client, sid string, err error)
 	ClientSubscribe(client *sse.Client, sid string, hookUrl string) (unsubscribe func(), err error)
 	MakeRequest(req *http.Request) (res *http.Response, err error)
 }
@@ -42,7 +42,7 @@ func TesterSpecification(t *testing.T, subject Tester) {
 	assert.NoError(t, subject.HealthCheck(), "Server not healthy")
 
 	// Client Side
-	client, sid, err := subject.ClientConnect(serverUrl, hookUrl)
+	client, sid, err := subject.ClientConnect(hookUrl)
 	assert.NoError(t, err, "Client could not establish connection")
 
 	// Subscribe to event
