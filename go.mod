@@ -3,7 +3,6 @@ module github.com/aargeee/whwh
 go 1.22.0
 
 require (
-	github.com/Rahul-NITD/whwh v0.1.1
 	github.com/r3labs/sse/v2 v2.10.0
 	github.com/testcontainers/testcontainers-go v0.28.0
 )
