@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Rahul-NITD/whwh/systems/client"
+	"github.com/aargeee/whwh/systems/client"
 )
 
 func main() {

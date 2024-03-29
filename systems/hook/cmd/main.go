@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Rahul-NITD/whwh/systems/hook"
+	"github.com/aargeee/whwh/systems/hook"
 )
 
 func main() {

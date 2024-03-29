@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Rahul-NITD/whwh/handlers"
+	"github.com/aargeee/whwh/handlers"
 )
 
 func main() {
