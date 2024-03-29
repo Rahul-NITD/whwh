@@ -21,6 +21,10 @@ func NewTesterServer() *TesterServer {
 	return t
 }
 
+func (t *TesterServer) ReportHealth() error {
+	return nil
+}
+
 func (t *TesterServer) CreateStream() string {
 	sid := uuid.NewString()
 	t.sseServer.CreateStream(sid)

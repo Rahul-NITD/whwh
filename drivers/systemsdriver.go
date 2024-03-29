@@ -2,8 +2,8 @@ package drivers
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
 
@@ -53,14 +53,18 @@ func makeHealthRequest(url string) error {
 	if res.StatusCode != http.StatusOK {
 		return fmt.Errorf("server not healthy, got %d", res.StatusCode)
 	}
+
 	defer res.Body.Close()
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
+
+	var response systems.HealthReport
+	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
 		return err
 	}
-	if string(body) != "All systems healthy" {
-		return fmt.Errorf(`did not receive "All systems healthy"`)
+
+	if response.Status != "HEALTHY" {
+		return fmt.Errorf("systems returned %s", response.Status)
 	}
+
 	return nil
 }
 
