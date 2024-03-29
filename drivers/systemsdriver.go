@@ -38,8 +38,8 @@ func (d *SysDriver) HookServerStart(outputBuffer *bytes.Buffer) (hookUrl string,
 }
 
 // HealthCheck implements specs.Tester.
-func (*SysDriver) HealthCheck(serverUrl string, hookUrl string) error {
-	if err := makeHealthRequest(serverUrl); err != nil {
+func (d *SysDriver) HealthCheck() error {
+	if err := makeHealthRequest(d.serverUrl); err != nil {
 		return err
 	}
 	return nil

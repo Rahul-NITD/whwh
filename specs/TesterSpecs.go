@@ -20,7 +20,7 @@ type Tester interface {
 	GetServerUrl() string
 	HookServerStart(outputBuffer *bytes.Buffer) (hookUrl string, shutdown func(), err error)
 
-	HealthCheck(serverUrl, hookUrl string) error
+	HealthCheck() error
 
 	ClientConnect(eventUrl, hookUrl string) (client *sse.Client, sid string, err error)
 	ClientSubscribe(client *sse.Client, sid string, hookUrl string) (unsubscribe func(), err error)
@@ -39,7 +39,7 @@ func TesterSpecification(t *testing.T, subject Tester) {
 	t.Cleanup(shutdown)
 
 	// HealthCheck
-	assert.NoError(t, subject.HealthCheck(serverUrl, hookUrl), "Server not healthy")
+	assert.NoError(t, subject.HealthCheck(), "Server not healthy")
 
 	// Client Side
 	client, sid, err := subject.ClientConnect(serverUrl, hookUrl)

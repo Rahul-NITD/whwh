@@ -34,8 +34,8 @@ func (d *DockerDriver) HookServerStart(outputBuffer *bytes.Buffer) (hookUrl stri
 }
 
 // HealthCheck implements specs.Tester.
-func (d *DockerDriver) HealthCheck(serverUrl string, hookUrl string) error {
-	return d.baseDriver.HealthCheck(serverUrl, hookUrl)
+func (d *DockerDriver) HealthCheck() error {
+	return d.baseDriver.HealthCheck()
 }
 
 // ClientConnect implements specs.Tester.
