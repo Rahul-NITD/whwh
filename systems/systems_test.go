@@ -2,17 +2,31 @@ package systems_test
 
 import (
 	"context"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/Rahul-NITD/whwh/drivers"
+	"github.com/Rahul-NITD/whwh/handlers"
 	"github.com/Rahul-NITD/whwh/specs"
 	"github.com/alecthomas/assert/v2"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
+// TesterServerStart implements specs.Tester.
+func TesterServerStart() (serverUrl string, shutdown func(), err error) {
+	handler := handlers.NewTesterServerHandler()
+	svr := httptest.NewServer(handler)
+	return svr.URL, svr.Close, nil
+}
+
 func TestSystem(t *testing.T) {
-	specs.TesterSpecification(t, drivers.NewSysDriver())
+
+	svr, shutdown, err := TesterServerStart()
+	assert.NoError(t, err, "Could not start TesterServer")
+	t.Cleanup(shutdown)
+
+	specs.TesterSpecification(t, drivers.NewSysDriver(svr))
 }
 
 func TestSystemDocker(t *testing.T) {

@@ -15,15 +15,16 @@ type DockerDriver struct {
 func NewDockerDriver(url string) *DockerDriver {
 	return &DockerDriver{
 		ServerUrl:  url,
-		baseDriver: NewSysDriver(),
+		baseDriver: NewSysDriver(url),
 	}
+}
+
+func (d *DockerDriver) GetServerUrl() string {
+	return d.ServerUrl
 }
 
 // TesterServerStart implements specs.Tester.
 func (d *DockerDriver) TesterServerStart() (serverUrl string, shutdown func(), err error) {
-	if err := d.baseDriver.InitServer(serverUrl); err != nil {
-		return "", func() {}, err
-	}
 	return d.ServerUrl, func() {}, nil
 }
 

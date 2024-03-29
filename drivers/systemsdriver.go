@@ -6,9 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 
-	"github.com/Rahul-NITD/whwh/handlers"
 	"github.com/Rahul-NITD/whwh/systems"
 	"github.com/Rahul-NITD/whwh/systems/client"
 	"github.com/Rahul-NITD/whwh/systems/hook"
@@ -17,35 +15,20 @@ import (
 
 type SysDriver struct {
 	done      chan struct{}
-	serverUrl url.URL
+	serverUrl string
 	isServer  bool
 }
 
-func NewSysDriver() *SysDriver {
+func NewSysDriver(svr string) *SysDriver {
 	return &SysDriver{
-		done:     make(chan struct{}),
-		isServer: false,
+		done:      make(chan struct{}),
+		isServer:  false,
+		serverUrl: svr,
 	}
 }
 
-// TesterServerStart implements specs.Tester.
-func (d *SysDriver) TesterServerStart() (serverUrl string, shutdown func(), err error) {
-	handler := handlers.NewTesterServerHandler()
-	svr := httptest.NewServer(handler)
-	if err := d.InitServer(svr.URL); err != nil {
-		svr.Close()
-		return "", func() {}, err
-	}
-	return svr.URL, svr.Close, nil
-}
-
-func (d *SysDriver) InitServer(svrURL string) error {
-	svurl, err := url.Parse(svrURL)
-	if err != nil {
-		return err
-	}
-	d.serverUrl = *svurl
-	return nil
+func (d *SysDriver) GetServerUrl() string {
+	return d.serverUrl
 }
 
 // HookServerStart implements specs.Tester.
