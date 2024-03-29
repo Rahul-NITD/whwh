@@ -14,8 +14,9 @@ type ATDriver struct {
 }
 
 // ConnectClientAndServer implements specs.WebhookTesterSubject.
-func (ATDriver) ConnectClientAndServer(t *testing.T, chanID string) (client specs.Client) {
-	panic("unimplemented ConnectClientAndServer")
+func (ATDriver) ConnectClientAndServer(t *testing.T, chanID string) specs.Client {
+	panic("unimplemented")
+	// return client.MakeConnection(chanID)
 }
 
 // CreateChannel implements specs.WebhookTesterSubject.
