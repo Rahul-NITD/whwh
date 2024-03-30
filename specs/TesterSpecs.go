@@ -17,8 +17,6 @@ type ConnectedClient interface {
 }
 
 type Tester interface {
-	GetServerUrl() string
-	GetHookParams() (*bytes.Buffer, string)
 	HealthCheck() error
 
 	ClientConnect(hookUrl string) (client *sse.Client, sid string, err error)
@@ -26,29 +24,31 @@ type Tester interface {
 	MakeRequest(req *http.Request) (res *http.Response, err error)
 }
 
-func TesterSpecification(t *testing.T, subject Tester) {
+type TestArguments struct {
+	ServerUrl, HookUrl string
+	OutputBuffer       *bytes.Buffer
+}
+
+func TesterSpecification(t *testing.T, subject Tester, args TestArguments) {
 	t.Helper()
-	// For server
-	serverUrl := subject.GetServerUrl()
-	outputBuffer, hookUrl := subject.GetHookParams()
 
 	// HealthCheck
 	assert.NoError(t, subject.HealthCheck(), "Subject not healthy")
 
 	// Client Side
-	client, sid, err := subject.ClientConnect(hookUrl)
+	client, sid, err := subject.ClientConnect(args.HookUrl)
 	assert.NoError(t, err, "Client could not establish connection")
 
 	// Subscribe to event
-	ubsubscribe, err := subject.ClientSubscribe(client, sid, hookUrl)
+	ubsubscribe, err := subject.ClientSubscribe(client, sid, args.HookUrl)
 	assert.NoError(t, err, "Could not subscribe to event")
 	t.Cleanup(ubsubscribe)
 
 	// Test Request
-	afterHook := makeRequestGetHookOutput(t, subject, hookUrl, sid, outputBuffer)
+	afterHook := makeRequestGetHookOutput(t, subject, args.HookUrl, sid, args.OutputBuffer)
 	assert.NoError(t, assertLineToRequest(afterHook), "Could not form a request from the line representations returned, "+string(afterHook))
 
-	afterServer := makeRequestGetHookOutput(t, subject, serverUrl, sid, outputBuffer)
+	afterServer := makeRequestGetHookOutput(t, subject, args.ServerUrl, sid, args.OutputBuffer)
 	assert.NoError(t, assertLineToRequest(afterServer), "Could not form a request from the line representations returned, "+string(afterHook))
 	assert.Equal[string](t, afterHook, afterServer)
 }

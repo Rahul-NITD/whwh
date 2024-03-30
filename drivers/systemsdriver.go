@@ -1,7 +1,6 @@
 package drivers
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,30 +11,17 @@ import (
 )
 
 type SysDriver struct {
-	done         chan struct{}
-	serverUrl    string
-	hookUrl      string
-	isServer     bool
-	outputBuffer *bytes.Buffer
+	done      chan struct{}
+	serverUrl string
+	isServer  bool
 }
 
-func NewSysDriver(svr string, hk string, outputBuffer *bytes.Buffer) *SysDriver {
+func NewSysDriver(svr string) *SysDriver {
 	return &SysDriver{
-		done:         make(chan struct{}),
-		isServer:     false,
-		serverUrl:    svr,
-		hookUrl:      hk,
-		outputBuffer: outputBuffer,
+		done:      make(chan struct{}),
+		isServer:  false,
+		serverUrl: svr,
 	}
-}
-
-func (d *SysDriver) GetServerUrl() string {
-	return d.serverUrl
-}
-
-// HookServerStart implements specs.Tester.
-func (d *SysDriver) GetHookParams() (*bytes.Buffer, string) {
-	return d.outputBuffer, d.hookUrl
 }
 
 // HealthCheck implements specs.Tester.

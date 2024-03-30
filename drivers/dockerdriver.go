@@ -1,7 +1,6 @@
 package drivers
 
 import (
-	"bytes"
 	"net/http"
 
 	sse "github.com/r3labs/sse/v2"
@@ -12,25 +11,11 @@ type DockerDriver struct {
 	baseDriver *SysDriver
 }
 
-func NewDockerDriver(url, hk string, outputBuffer *bytes.Buffer) *DockerDriver {
+func NewDockerDriver(url string) *DockerDriver {
 	return &DockerDriver{
 		ServerUrl:  url,
-		baseDriver: NewSysDriver(url, hk, outputBuffer),
+		baseDriver: NewSysDriver(url),
 	}
-}
-
-func (d *DockerDriver) GetServerUrl() string {
-	return d.ServerUrl
-}
-
-// TesterServerStart implements specs.Tester.
-func (d *DockerDriver) TesterServerStart() (serverUrl string, shutdown func(), err error) {
-	return d.ServerUrl, func() {}, nil
-}
-
-// HookServerStart implements specs.Tester.
-func (d *DockerDriver) GetHookParams() (*bytes.Buffer, string) {
-	return d.baseDriver.GetHookParams()
 }
 
 // HealthCheck implements specs.Tester.
