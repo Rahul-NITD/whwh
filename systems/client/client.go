@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"net/http"
 	"net/url"
 
@@ -22,14 +21,14 @@ func ClientConnect(serverUrl string, hookUrl string) (*sse.Client, string, error
 
 	defer res.Body.Close()
 
-	sid, err := io.ReadAll(res.Body)
-	if err != nil {
+	var response systems.StreamPayloadResponse
+	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
 		return nil, "", err
 	}
 
 	cli := sse.NewClient(serverUrl + systems.EVENTSPATH)
 
-	return cli, string(sid), nil
+	return cli, string(response.Payload.StreamID), nil
 }
 
 func ClientSubscribe(client *sse.Client, sid string, hookUrl string, deferfunc ...func()) (unsubscribe func(), err error) {

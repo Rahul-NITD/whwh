@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/aargeee/whwh/systems"
@@ -51,7 +50,18 @@ func dodefers(deferfunc ...func()) {
 }
 
 func (t *TesterServerHandler) createStreamHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, t.testerServer.CreateStream())
+	sid := t.testerServer.CreateStream()
+
+	response := systems.StreamPayloadResponse{
+		Event: "CREATE_STREAM",
+		Payload: systems.StreamPayload{
+			StreamID: sid,
+		},
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (t *TesterServerHandler) healthHandler(w http.ResponseWriter, r *http.Request) {

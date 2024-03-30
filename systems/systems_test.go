@@ -38,16 +38,14 @@ func TestSystem(t *testing.T) {
 		})
 	})
 
+	if testing.Short() {
+		t.Skip()
+	}
 	t.Run("With Docker", DockerTest(hookUrl, outputBuffer))
 }
 
 func DockerTest(hookUrl string, outputBuffer *bytes.Buffer) func(t *testing.T) {
 	return func(t *testing.T) {
-
-		if testing.Short() {
-			t.Skip()
-		}
-
 		cxt := context.Background()
 
 		driver, term, err := drivers.NewDockerDriver("http://localhost:8000", cxt)
