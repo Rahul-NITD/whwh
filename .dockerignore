@@ -3,3 +3,4 @@ experiments
 specs
 .dockerignore
 .gitignore
+*_test.go
