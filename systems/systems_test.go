@@ -32,13 +32,11 @@ func TestSystem(t *testing.T) {
 	assert.NoError(t, err, "Could not start hook service")
 	t.Cleanup(shutdown)
 
-	args := specs.TestArguments{
+	specs.TesterSpecification(t, drivers.NewSysDriver(svr), specs.TestArguments{
 		ServerUrl:    svr,
 		HookUrl:      hookUrl,
 		OutputBuffer: outputBuffer,
-	}
-
-	specs.TesterSpecification(t, drivers.NewSysDriver(svr), args)
+	})
 }
 
 func TestSystemDocker(t *testing.T) {
@@ -74,11 +72,9 @@ func TestSystemDocker(t *testing.T) {
 	assert.NoError(t, err, "Could not start hook service")
 	t.Cleanup(shutdown)
 
-	args := specs.TestArguments{
+	specs.TesterSpecification(t, drivers.NewDockerDriver("http://localhost:8000"), specs.TestArguments{
 		ServerUrl:    "http://localhost:8000",
 		HookUrl:      hookUrl,
 		OutputBuffer: outputBuffer,
-	}
-
-	specs.TesterSpecification(t, drivers.NewDockerDriver("http://localhost:8000"), args)
+	})
 }
