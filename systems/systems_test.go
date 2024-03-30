@@ -12,8 +12,6 @@ import (
 	"github.com/aargeee/whwh/specs"
 	"github.com/aargeee/whwh/systems/hook"
 	"github.com/alecthomas/assert/v2"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 // TesterServerStart implements specs.Tester.
@@ -32,49 +30,36 @@ func TestSystem(t *testing.T) {
 	assert.NoError(t, err, "Could not start hook service")
 	t.Cleanup(shutdown)
 
-	specs.TesterSpecification(t, drivers.NewSysDriver(svr), specs.TestArguments{
-		ServerUrl:    svr,
-		HookUrl:      hookUrl,
-		OutputBuffer: outputBuffer,
+	t.Run("Test Without Docker", func(t *testing.T) {
+		specs.TesterSpecification(t, drivers.NewSysDriver(svr), specs.TestArguments{
+			ServerUrl:    svr,
+			HookUrl:      hookUrl,
+			OutputBuffer: outputBuffer,
+		})
 	})
+
+	t.Run("With Docker", DockerTest(hookUrl, outputBuffer))
 }
 
-func TestSystemDocker(t *testing.T) {
+func DockerTest(hookUrl string, outputBuffer *bytes.Buffer) func(t *testing.T) {
+	return func(t *testing.T) {
 
-	if testing.Short() {
-		t.Skip()
+		if testing.Short() {
+			t.Skip()
+		}
+
+		cxt := context.Background()
+
+		driver, term, err := drivers.NewDockerDriver("http://localhost:8000", cxt)
+		assert.NoError(t, err)
+		t.Cleanup(func() {
+			assert.NoError(t, term(cxt), "Error terminating")
+		})
+
+		specs.TesterSpecification(t, driver, specs.TestArguments{
+			ServerUrl:    "http://localhost:8000",
+			HookUrl:      hookUrl,
+			OutputBuffer: outputBuffer,
+		})
 	}
-
-	req := testcontainers.ContainerRequest{
-		FromDockerfile: testcontainers.FromDockerfile{
-			Context:       "../.",
-			Dockerfile:    "./Dockerfile",
-			PrintBuildLog: true,
-		},
-		ExposedPorts: []string{"8000:8000"},
-		WaitingFor:   wait.ForHTTP("/health").WithPort("8000"),
-	}
-
-	cxt := context.Background()
-
-	container, err := testcontainers.GenericContainer(cxt, testcontainers.GenericContainerRequest{
-		ContainerRequest: req,
-		Started:          true,
-	})
-
-	assert.NoError(t, err)
-	t.Cleanup(func() {
-		assert.NoError(t, container.Terminate(cxt))
-	})
-
-	outputBuffer := &bytes.Buffer{}
-	hookUrl, shutdown, err := SpinServer(hook.NewHook(outputBuffer))
-	assert.NoError(t, err, "Could not start hook service")
-	t.Cleanup(shutdown)
-
-	specs.TesterSpecification(t, drivers.NewDockerDriver("http://localhost:8000"), specs.TestArguments{
-		ServerUrl:    "http://localhost:8000",
-		HookUrl:      hookUrl,
-		OutputBuffer: outputBuffer,
-	})
 }

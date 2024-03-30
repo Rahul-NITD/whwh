@@ -1,9 +1,12 @@
 package drivers
 
 import (
+	"context"
 	"net/http"
 
 	sse "github.com/r3labs/sse/v2"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 type DockerDriver struct {
@@ -11,11 +14,25 @@ type DockerDriver struct {
 	baseDriver *SysDriver
 }
 
-func NewDockerDriver(url string) *DockerDriver {
+func NewDockerDriver(url string, cxt context.Context) (*DockerDriver, func(context.Context) error, error) {
+
+	container, err := testcontainers.GenericContainer(cxt, testcontainers.GenericContainerRequest{
+		ContainerRequest: testcontainers.ContainerRequest{
+			FromDockerfile: testcontainers.FromDockerfile{
+				Context:       "../.",
+				Dockerfile:    "./Dockerfile",
+				PrintBuildLog: true,
+			},
+			ExposedPorts: []string{"8000:8000"},
+			WaitingFor:   wait.ForHTTP("/health").WithPort("8000"),
+		},
+		Started: true,
+	})
+
 	return &DockerDriver{
 		ServerUrl:  url,
 		baseDriver: NewSysDriver(url),
-	}
+	}, container.Terminate, err
 }
 
 // HealthCheck implements specs.Tester.
