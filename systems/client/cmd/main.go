@@ -12,9 +12,10 @@ import (
 
 func main() {
 	var serverUrl string
-	serverUrl = "https://webhookwormhole-latest.onrender.com"
-	if os.Getenv("AARGEEE_TEST_ENV") == "True" {
-		serverUrl = "http://localhost:8000"
+	serverUrl = "http://localhost:8000"
+	if os.Getenv("AARGEEE_PROD_ENV") == "True" {
+		serverUrl = os.Getenv("AARGEEE_WHWH_SERVER")
+	} else {
 		println("Running in test environment, ", serverUrl)
 	}
 	hookUrl := cli.ParseFlags()
