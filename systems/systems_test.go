@@ -1,32 +1,38 @@
 package systems_test
 
 import (
+	"bytes"
 	"context"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/aargeee/whwh/drivers"
 	"github.com/aargeee/whwh/handlers"
 	"github.com/aargeee/whwh/specs"
+	"github.com/aargeee/whwh/systems/hook"
 	"github.com/alecthomas/assert/v2"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 // TesterServerStart implements specs.Tester.
-func TesterServerStart() (serverUrl string, shutdown func(), err error) {
-	handler := handlers.NewTesterServerHandler()
+func SpinServer(handler http.Handler) (serverUrl string, shutdown func(), err error) {
 	svr := httptest.NewServer(handler)
 	return svr.URL, svr.Close, nil
 }
 
 func TestSystem(t *testing.T) {
-
-	svr, shutdown, err := TesterServerStart()
+	svr, shutdown, err := SpinServer(handlers.NewTesterServerHandler())
 	assert.NoError(t, err, "Could not start TesterServer")
 	t.Cleanup(shutdown)
 
-	specs.TesterSpecification(t, drivers.NewSysDriver(svr))
+	outputBuffer := &bytes.Buffer{}
+	hookUrl, shutdown, err := SpinServer(hook.NewHook(outputBuffer))
+	assert.NoError(t, err, "Could not start hook service")
+	t.Cleanup(shutdown)
+
+	specs.TesterSpecification(t, drivers.NewSysDriver(svr, hookUrl, outputBuffer))
 }
 
 func TestSystemDocker(t *testing.T) {
@@ -57,5 +63,10 @@ func TestSystemDocker(t *testing.T) {
 		assert.NoError(t, container.Terminate(cxt))
 	})
 
-	specs.TesterSpecification(t, drivers.NewDockerDriver("http://localhost:8000"))
+	outputBuffer := &bytes.Buffer{}
+	hookUrl, shutdown, err := SpinServer(hook.NewHook(outputBuffer))
+	assert.NoError(t, err, "Could not start hook service")
+	t.Cleanup(shutdown)
+
+	specs.TesterSpecification(t, drivers.NewDockerDriver("http://localhost:8000", hookUrl, outputBuffer))
 }

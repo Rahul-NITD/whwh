@@ -5,25 +5,27 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
 
 	"github.com/aargeee/whwh/systems"
 	"github.com/aargeee/whwh/systems/client"
-	"github.com/aargeee/whwh/systems/hook"
 	sse "github.com/r3labs/sse/v2"
 )
 
 type SysDriver struct {
-	done      chan struct{}
-	serverUrl string
-	isServer  bool
+	done         chan struct{}
+	serverUrl    string
+	hookUrl      string
+	isServer     bool
+	outputBuffer *bytes.Buffer
 }
 
-func NewSysDriver(svr string) *SysDriver {
+func NewSysDriver(svr string, hk string, outputBuffer *bytes.Buffer) *SysDriver {
 	return &SysDriver{
-		done:      make(chan struct{}),
-		isServer:  false,
-		serverUrl: svr,
+		done:         make(chan struct{}),
+		isServer:     false,
+		serverUrl:    svr,
+		hookUrl:      hk,
+		outputBuffer: outputBuffer,
 	}
 }
 
@@ -32,9 +34,8 @@ func (d *SysDriver) GetServerUrl() string {
 }
 
 // HookServerStart implements specs.Tester.
-func (d *SysDriver) HookServerStart(outputBuffer *bytes.Buffer) (hookUrl string, shutdown func(), err error) {
-	svr := httptest.NewServer(hook.NewHook(outputBuffer))
-	return svr.URL, svr.Close, nil
+func (d *SysDriver) GetHookParams() (*bytes.Buffer, string) {
+	return d.outputBuffer, d.hookUrl
 }
 
 // HealthCheck implements specs.Tester.

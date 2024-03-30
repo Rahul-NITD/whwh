@@ -12,10 +12,10 @@ type DockerDriver struct {
 	baseDriver *SysDriver
 }
 
-func NewDockerDriver(url string) *DockerDriver {
+func NewDockerDriver(url, hk string, outputBuffer *bytes.Buffer) *DockerDriver {
 	return &DockerDriver{
 		ServerUrl:  url,
-		baseDriver: NewSysDriver(url),
+		baseDriver: NewSysDriver(url, hk, outputBuffer),
 	}
 }
 
@@ -29,8 +29,8 @@ func (d *DockerDriver) TesterServerStart() (serverUrl string, shutdown func(), e
 }
 
 // HookServerStart implements specs.Tester.
-func (d *DockerDriver) HookServerStart(outputBuffer *bytes.Buffer) (hookUrl string, shutdown func(), err error) {
-	return d.baseDriver.HookServerStart(outputBuffer)
+func (d *DockerDriver) GetHookParams() (*bytes.Buffer, string) {
+	return d.baseDriver.GetHookParams()
 }
 
 // HealthCheck implements specs.Tester.

@@ -18,8 +18,7 @@ type ConnectedClient interface {
 
 type Tester interface {
 	GetServerUrl() string
-	HookServerStart(outputBuffer *bytes.Buffer) (hookUrl string, shutdown func(), err error)
-
+	GetHookParams() (*bytes.Buffer, string)
 	HealthCheck() error
 
 	ClientConnect(hookUrl string) (client *sse.Client, sid string, err error)
@@ -31,15 +30,10 @@ func TesterSpecification(t *testing.T, subject Tester) {
 	t.Helper()
 	// For server
 	serverUrl := subject.GetServerUrl()
-
-	// For hook
-	outputBuffer := &bytes.Buffer{}
-	hookUrl, shutdown, err := subject.HookServerStart(outputBuffer)
-	assert.NoError(t, err, "Tester Server could not be started")
-	t.Cleanup(shutdown)
+	outputBuffer, hookUrl := subject.GetHookParams()
 
 	// HealthCheck
-	assert.NoError(t, subject.HealthCheck(), "Server not healthy")
+	assert.NoError(t, subject.HealthCheck(), "Subject not healthy")
 
 	// Client Side
 	client, sid, err := subject.ClientConnect(hookUrl)
