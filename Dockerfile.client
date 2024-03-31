@@ -8,5 +8,7 @@ RUN go mod download
 
 COPY . .
 ENV AARGEEE_PROD_URL="http://host.docker.internal:8000"
+ENV AARGEEE_HOOK_URL="http://localhost:3000"
+ENV AARGEEE_ENV="Docker"
 RUN go build -o cli systems/client/cmd/*.go
 CMD [ "./cli" ]
