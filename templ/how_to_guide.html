@@ -76,30 +76,29 @@
                 <h4>Using Binary</h4>
                 <p>
                   You can use the latest binary release. You can download it using <code>wget</code><br>
-                  <span class="badge text-bg-primary">Windows</span>
-                  <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>wget -O whwh_cli.exe https://github.com/aargeee/whwh/releases/download/&lt;TAG&gt;/whwh_cli.exe</code><br>
-                  <span class="badge text-bg-primary">Linux</span>
-                  <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>wget -O whwh_cli https://github.com/aargeee/whwh/releases/download/&lt;TAG&gt;/whwh_cli</code><br>
-                  use the latest tag in place of <code>&lt;TAG&gt;</code>.
+                  Make sure <code>wget</code> is available in your system.
                 </p>
                 <div id="2-1-Downloading_Binary">
                   <h5>1. Installing Client image</h5>
-                  <div>The image can be installed using DockerHub. <a href="https://hub.docker.com/r/dockarg/whwh_cli/tags">here</a></div>
-                  <div>To install the image, use this command</div>
                   <p>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>docker pull dockarg/whwh_cli</code>
+                    <span class="badge text-bg-primary">Windows</span><br>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>wget -O whwh_cli.exe https://github.com/aargeee/whwh/releases/download/&lt;TAG&gt;/whwh_cli.exe</code><br>
+                    <span class="badge text-bg-primary">Linux</span><br>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>wget -O whwh_cli https://github.com/aargeee/whwh/releases/download/&lt;TAG&gt;/whwh_cli</code><br>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>chmod +x whwh_cli</code><br>
+                    use the latest tag in place of <code>&lt;TAG&gt;</code>.
                   </p>
                 </div>
                 <div id="2-2-Start_Binary">
                   <h5>2. Starting the container</h5>
-                  <p>Now that the image has been downloaded, you can start the container with the following command. <br>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>docker run -e AARGEEE_HOOK_URL=http://localhost:3001 dockarg/whwh_cli</code><br>
-                    This would have started the client. <br>
-                    <span class="badge text-bg-warning">Note</span> If <code>AARGEEE_HOOK_URL</code> is not provided, the default url <code>http://localhost:3000</code> is selected. <br>
-                    You must receive this as your output. <br>
-                    <code>time=... level=INFO msg="Starting WHWH Client... Thankyou for choosing me!"<br>
-                      time=... level=INFO msg="Received Hook Url: &lt;APP_URL&gt;"<br>
-                      time=... level=INFO msg="All data to https://whwh.rahulgoel.dev?stream=&lt;uniqueid&gt; will be forwarded to &lt;APP_URL&gt;"</code>
+                  <p>
+                    <span class="badge text-bg-primary">Windows</span><br>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>$Env:AARGEEE_HOOK_URL="&lt;APP_URL&gt;"</code><br>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>./whwh_cli.exe</code><br>
+                    <span class="badge text-bg-primary">Linux</span><br>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>AARGEEE_HOOK_URL="&lt;APP_URL&gt;"</code><br>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>./whwh_cli</code><br>
+                    The client should have started forwarding traffic to your application.                    
                   </p>
                 </div>
               </div>
