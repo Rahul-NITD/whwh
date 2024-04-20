@@ -1,115 +1,152 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>How to WHWH</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  </head>
-  <body>
-    <div class="container">
-        <a href="https://rahulgoel.dev">⟪ rahulgoel.dev</a>
-        <h1>Using WebhookWormhole</h1>
-        <p>Thank you for choosing WebhookWormhole. If you are building apps that have webhooks involved, you are in the right place. WebhookWormhole gives you the convenience of allowing to test a webhook based application in the warmth of your localhost.</p>
+</head>
+<body>
+<div class="container">
+    <a href="https://rahulgoel.dev" class="text-decoration-none">⟪ rahulgoel.dev</a>
+    <h1>Using WebhookWormhole</h1>
+    <p>Thank you for choosing WebhookWormhole. If you are building apps that have webhooks involved, you are in the right place. WebhookWormhole gives you the convenience of allowing to test a webhook-based application in the warmth of your localhost.</p>
 
-        <h3>Please follow the below steps to start testing your application right away.</h3>
-        <div class="row">
-          <div class="col-3">
+    <h3>Please follow the below steps to start testing your application right away.</h3>
+    <div class="row">
+        <div class="col-3">
             <nav id="usage-methods" class="h-100 flex-column align-items-stretch pe-4 border-end">
-              <nav class="nav nav-pills flex-column">
-                <a class="nav-link" href="#1-Using_Docker">Using Docker <span class="badge text-bg-success">Recommended</span></a>
                 <nav class="nav nav-pills flex-column">
-                  <a class="nav-link ms-3 my-1" href="#1-1-Installing_Client_image">1. Installing Client image</a>
-                  <a class="nav-link ms-3 my-1" href="#1-2-Starting_the_container">2. Starting the container</a>
-                  <a class="nav-link ms-3 my-1" href="#1-3-Test_your_client">3. Test your client</a>
+                    <a class="nav-link" href="#S1-Using_Docker">Using Docker <span class="badge bg-success">Recommended</span></a>
+                    <nav class="nav nav-pills flex-column">
+                        <a class="nav-link ms-3 my-1" href="#S1-1-Installing_Client_image">1. Installing Client image</a>
+                        <a class="nav-link ms-3 my-1" href="#S1-2-Starting_the_container">2. Starting the container</a>
+                        <a class="nav-link ms-3 my-1" href="#S1-3-Test_your_client">3. Test your client</a>
+                    </nav>
+                    <a class="nav-link" href="#S2-Using_Binary">Using Binary</a>
+                    <nav class="nav nav-pills flex-column">
+                        <a class="nav-link ms-3 my-1" href="#S2-1-Downloading_Binary">1. Downloading client binary</a>
+                        <a class="nav-link ms-3 my-1" href="#S2-2-Start_Binary">2. Starting Binary</a>
+                    </nav>
                 </nav>
-                <a class="nav-link" href="#2-Using_Binary">Using binary</a>
-                <nav class="nav nav-pills flex-column">
-                  <a class="nav-link ms-3 my-1" href="#2-1-Downloading_Binary">1. Downloading client binary</a>
-                  <a class="nav-link ms-3 my-1" href="#2-2-Start_Binary">2. Starting Binary</a>
-                </nav>
-              </nav>
             </nav>
-          </div>
-        
-          <div class="col-8">
-            <div data-bs-spy="scroll" data-bs-target="#usage-methods" data-bs-smooth-scroll="true" tabindex="0">
-              <div id="1-Using_Docker">
-                <h4>Using Docker <span class="badge text-bg-success">Recommended</span></h4>
-                <div>
-                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 48 48">
-                    <path fill="#2395ec" d="M47.527,19.847c-0.13-0.102-1.345-1.007-3.908-1.007c-0.677,0.003-1.352,0.06-2.019,0.171 c-0.496-3.354-3.219-4.93-3.345-5.003l-0.688-0.392l-0.453,0.644c-0.567,0.866-1.068,1.76-1.311,2.763 c-0.459,1.915-0.18,3.713,0.806,5.25C35.417,22.928,33.386,22.986,33,23H1.582c-0.826,0.001-1.496,0.66-1.501,1.474 c-0.037,2.733,0.353,5.553,1.306,8.119c1.089,2.818,2.71,4.894,4.818,6.164C8.567,40.184,12.405,41,16.756,41 c1.965,0.006,3.927-0.169,5.859-0.524c2.686-0.487,5.271-1.413,7.647-2.74c1.958-1.119,3.72-2.542,5.219-4.215 c2.505-2.798,3.997-5.913,5.107-8.682c0.149,0,0.298,0,0.442,0c2.743,0,4.429-1.083,5.359-1.99 c0.618-0.579,1.101-1.284,1.414-2.065L48,20.216L47.527,19.847z"></path><path fill="#2395ec" d="M8,22H5c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C9,21.552,8.552,22,8,22z"></path><path fill="#2395ec" d="M14,22h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C15,21.552,14.552,22,14,22z"></path><path fill="#2395ec" d="M20,22h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C21,21.552,20.552,22,20,22z"></path><path fill="#2395ec" d="M26,22h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C27,21.552,26.552,22,26,22z"></path><path fill="#2395ec" d="M14,16h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C15,15.552,14.552,16,14,16z"></path><path fill="#2395ec" d="M20,16h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C21,15.552,20.552,16,20,16z"></path><path fill="#2395ec" d="M26,16h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C27,15.552,26.552,16,26,16z"></path><path fill="#2395ec" d="M26,10h-3c-0.552,0-1-0.448-1-1V6c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C27,9.552,26.552,10,26,10z"></path><path fill="#2395ec" d="M32,22h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C33,21.552,32.552,22,32,22z"></path>
-                  </svg>
-                  <span>Docker <span class="badge text-bg-danger">Required</span></span>
-                </div>
-                <p>Using the docker image, you can run setup the client without any hassle.</p>
-                <div id="1-1-Installing_Client_image">
-                  <h5>1. Installing Client image</h5>
-                  <div>The image can be installed using DockerHub. <a href="https://hub.docker.com/r/dockarg/whwh_cli/tags">here</a></div>
-                  <div>To install the image, use this command</div>
-                  <p>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>docker pull dockarg/whwh_cli</code>
-                  </p>
-                </div>
-                <div id="1-2-Starting_the_container">
-                  <h5>2. Starting the container</h5>
-                  <p>Now that the image has been downloaded, you can start the container with the following command. <br>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>docker run -e AARGEEE_HOOK_URL=http://localhost:3001 dockarg/whwh_cli</code><br>
-                    This would have started the client. <br>
-                    <span class="badge text-bg-warning">Note</span> If <code>AARGEEE_HOOK_URL</code> is not provided, the default url <code>http://localhost:3000</code> is selected. <br>
-                    You must receive this as your output. <br>
-                    <code>time=... level=INFO msg="Starting WHWH Client... Thankyou for choosing me!"<br>
-                      time=... level=INFO msg="Received Hook Url: &lt;APP_URL&gt;"<br>
-                      time=... level=INFO msg="All data to https://whwh.rahulgoel.dev?stream=&lt;uniqueid&gt; will be forwarded to &lt;APP_URL&gt;"</code>
-                  </p>
-                </div>
-                <div id="1-3-Test_your_client">
-                  <h5>3. Test your client</h5>
-                  <p>paste your unique id here and click on the test button. <br>
-                    This will send the following payload to the hook url as a POST request. <br>
-                    <code>{ "payload": "test"}</code><br>
-                  <code>https://whhw.rahulgoel.dev?stream=</code><input type="text" name="uniqueid" size="35" required class="text-danger" id="id"> <button class="btn btn-success">Test</button>
-                </p>
-                </div>
-              </div>
-              <div id="2-Using_Binary">
-                <h4>Using Binary</h4>
-                <p>
-                  You can use the latest binary release. You can download it using <code>wget</code><br>
-                  Make sure <code>wget</code> is available in your system.
-                </p>
-                <div id="2-1-Downloading_Binary">
-                  <h5>1. Installing Client image</h5>
-                  <p>
-                    <span class="badge text-bg-primary">Windows</span><br>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>wget -O whwh_cli.exe https://github.com/aargeee/whwh/releases/download/&lt;TAG&gt;/whwh_cli.exe</code><br>
-                    <span class="badge text-bg-primary">Linux</span><br>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>wget -O whwh_cli https://github.com/aargeee/whwh/releases/download/&lt;TAG&gt;/whwh_cli</code><br>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>chmod +x whwh_cli</code><br>
-                    use the latest tag in place of <code>&lt;TAG&gt;</code>.
-                  </p>
-                </div>
-                <div id="2-2-Start_Binary">
-                  <h5>2. Starting the container</h5>
-                  <p>
-                    <span class="badge text-bg-primary">Windows</span><br>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>$Env:AARGEEE_HOOK_URL="&lt;APP_URL&gt;"</code><br>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>./whwh_cli.exe</code><br>
-                    <span class="badge text-bg-primary">Linux</span><br>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>AARGEEE_HOOK_URL="&lt;APP_URL&gt;"</code><br>
-                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>./whwh_cli</code><br>
-                    The client should have started forwarding traffic to your application.                    
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-        <p>For any queries, Please contact me @<a href="mailto:rgoel1729@gmail.com">rgoel1729@gmail.com</a>❤️</p>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script>
 
-    </script>
-  </body>
+        <div class="col-8">
+            <div data-bs-spy="scroll" data-bs-target="#usage-methods" data-bs-offset="0" tabindex="0">
+                <div id="S1-Using_Docker">
+                    <h4>Using Docker <span class="badge bg-success">Recommended</span></h4>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 48 48">
+                            <path fill="#2395ec" d="M47.527,19.847c-0.13-0.102-1.345-1.007-3.908-1.007c-0.677,0.003-1.352,0.06-2.019,0.171 c-0.496-3.354-3.219-4.93-3.345-5.003l-0.688-0.392l-0.453,0.644c-0.567,0.866-1.068,1.76-1.311,2.763 c-0.459,1.915-0.18,3.713,0.806,5.25C35.417,22.928,33.386,22.986,33,23H1.582c-0.826,0.001-1.496,0.66-1.501,1.474 c-0.037,2.733,0.353,5.553,1.306,8.119c1.089,2.818,2.71,4.894,4.818,6.164C8.567,40.184,12.405,41,16.756,41 c1.965,0.006,3.927-0.169,5.859-0.524c2.686-0.487,5.271-1.413,7.647-2.74c1.958-1.119,3.72-2.542,5.219-4.215 c2.505-2.798,3.997-5.913,5.107-8.682c0.149,0,0.298,0,0.442,0c2.743,0,4.429-1.083,5.359-1.99 c0.618-0.579,1.101-1.284,1.414-2.065L48,20.216L47.527,19.847z"></path>
+                            <path fill="#2395ec" d="M8,22H5c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C9,21.552,8.552,22,8,22z"></path>
+                            <path fill="#2395ec" d="M14,22h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C15,21.552,14.552,22,14,22z"></path>
+                            <path fill="#2395ec" d="M20,22h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C21,21.552,20.552,22,20,22z"></path>
+                            <path fill="#2395ec" d="M26,22h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C27,21.552,26.552,22,26,22z"></path>
+                            <path fill="#2395ec" d="M14,16h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C15,15.552,14.552,16,14,16z"></path>
+                            <path fill="#2395ec" d="M20,16h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C21,15.552,20.552,16,20,16z"></path>
+                            <path fill="#2395ec" d="M26,16h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C27,15.552,26.552,16,26,16z"></path>
+                            <path fill="#2395ec" d="M26,10h-3c-0.552,0-1-0.448-1-1V6c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C27,9.552,26.552,10,26,10z"></path>
+                            <path fill="#2395ec" d="M32,22h-3c-0.552,0-1-0.448-1-1v-3c0-0.552,0.448-1,1-1h3c0.552,0,1,0.448,1,1v3 C33,21.552,32.552,22,32,22z"></path>
+                        </svg>
+                        <span>Docker <span class="badge bg-danger">Required</span></span>
+                    </div>
+                    <p>Using the docker image, you can run setup the client without any hassle.</p>
+                    <div id="S1-1-Installing_Client_image">
+                        <h5>1. Installing Client image</h5>
+                        <div>The image can be installed using DockerHub. <a href="https://hub.docker.com/r/dockarg/whwh_cli/tags" class="text-decoration-none">here</a></div>
+                        <div>To install the image, use this command</div>
+                        <p>
+                            <code><span style="-webkit-user-select: none; user-select: none; -ms-user-select: none;">&gt; </span>docker pull dockarg/whwh_cli</code>
+                        </p>
+                    </div>
+                    <div id="S1-2-Starting_the_container">
+                        <h5>2. Starting the container</h5>
+                        <p>Now that the image has been downloaded, you can start the container with the following command. <br>
+                            <code><span style="-webkit-user-select: none; user-select: none; -ms-user-select: none;">&gt; </span>docker run -e AARGEEE_HOOK_URL=http://localhost:3001 dockarg/whwh_cli</code><br>
+                            This would have started the client. <br>
+                            <span class="badge bg-warning">Note</span> If <code>AARGEEE_HOOK_URL</code> is not provided, the default url <code>http://localhost:3000</code> is selected. <br>
+                            You must receive this as your output. <br>
+                            <code>time=... level=INFO msg="Starting WHWH Client... Thank you for choosing me!"<br>
+                            time=... level=INFO msg="Received Hook Url: &lt;APP_URL&gt;"<br>
+                            time=... level=INFO msg="All data to https://whwh.rahulgoel.dev?stream=&lt;uniqueid&gt; will be forwarded to &lt;APP_URL&gt;"</code>
+                        </p>
+                    </div>
+                    <div id="S1-3-Test_your_client">
+                        <h5>3. Test your client</h5>
+                        <p>Paste your unique id here and click on the test button. <br>
+                            This will send the following payload to the hook url as a POST request. <br>
+                            <code>{ "payload": "test" }</code><br>
+                            <code>https://whwh.rahulgoel.dev?stream=</code>
+                            <input type="text" name="uniqueid" size="35" required class="text-danger" id="uniqueid"> <button class="btn btn-success" onclick="sendPostRequest()">Test</button><span id="statusIcon"></span>
+                        </p>
+                    </div>
+                </div>
+                <div id="S2-Using_Binary">
+                    <h4>Using Binary</h4>
+                    <p>
+                        You can use the latest binary release. You can download it using <code>wget</code><br>
+                        Make sure <code>wget</code> is available in your system.
+                    </p>
+                    <div id="S2-1-Downloading_Binary">
+                        <h5>1. Downloading client binary</h5>
+                        <p>
+                            <span class="badge bg-primary">Windows</span><br>
+                            <code><span style="-webkit-user-select: none; user-select: none; -ms-user-select: none;">&gt; </span>wget -O whwh_cli.exe https://github.com/aargeee/whwh/releases/download/&lt;TAG&gt;/whwh_cli.exe</code><br>
+                            <span class="badge bg-primary">Linux</span><br>
+                            <code><span style="-webkit-user-select: none; user-select: none; -ms-user-select: none;">&gt; </span>wget -O whwh_cli https://github.com/aargeee/whwh/releases/download/&lt;TAG&gt;/whwh_cli</code><br>
+                            <code><span style="-webkit-user-select: none; user-select: none; -ms-user-select: none;">&gt; </span>chmod +x whwh_cli</code><br>
+                            Use the latest tag in place of <code>&lt;TAG&gt;</code>.
+                        </p>
+                    </div>
+                    <div id="S2-2-Start_Binary">
+                        <h5>2. Starting the container</h5>
+                        <p>
+                            <span class="badge bg-primary">Windows</span><br>
+                            <code><span style="-webkit-user-select: none; user-select: none; -ms-user-select: none;">&gt; </span>$Env:AARGEEE_HOOK_URL="&lt;APP_URL&gt;"</code><br>
+                            <code><span style="-webkit-user-select: none; user-select: none; -ms-user-select: none;">&gt; </span>./whwh_cli.exe</code><br>
+                            <span class="badge bg-primary">Linux</span><br>
+                            <code><span style="-webkit-user-select: none; user-select: none; -ms-user-select: none;">&gt; </span>AARGEEE_HOOK_URL="&lt;APP_URL&gt;"</code><br>
+                            <code><span style="-webkit-user-select: none; user-select: none; -ms-user-select: none;">&gt; </span>./whwh_cli</code><br>
+                            The client should have started forwarding traffic to your application.                    
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>For any queries, please contact me at <a href="mailto:rgoel1729@gmail.com" class="text-decoration-none">rgoel1729@gmail.com</a> ❤️</p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+    function sendPostRequest() {
+        var uniqueid = document.querySelector("#uniqueid").value;
+        var url = "https://whwh.rahulgoel.dev?stream=" + uniqueid;
+        var payload = { "payload": "test" };
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            displayStatus(true)
+        })
+        .catch(error => {
+            console.error(error);
+            displayStatus(false);
+        });
+    }
+
+    function displayStatus(success) {
+        var statusIcon = document.querySelector("#statusIcon");
+        statusIcon.textContent = success ? '✅' : '❌';
+    }
+</script>
+</body>
 </html>

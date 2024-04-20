@@ -51,6 +51,10 @@ func (t *TesterServerHandler) homeHandler(deferfunc ...func()) func(w http.Respo
 
 		sid := r.URL.Query().Get("stream")
 
+		if sid == "" {
+			http.Redirect(w, r, "http://whwh.rahulgoel.dev/how_to", http.StatusSeeOther)
+		}
+
 		err := t.testerServer.PublishRequest(sid, r)
 		if err != nil {
 			println("Error in Publishing,", err)
