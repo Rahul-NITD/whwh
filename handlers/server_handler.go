@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"html/template"
+	"log"
 	"net/http"
+	"path"
 
 	"github.com/aargeee/whwh/systems"
 	"github.com/aargeee/whwh/systems/server"
@@ -11,6 +14,7 @@ import (
 type TesterServerHandler struct {
 	http.Handler
 	testerServer *server.TesterServer
+	templ        *template.Template
 }
 
 func NewTesterServerHandler(deferfunc ...func()) *TesterServerHandler {
@@ -24,10 +28,22 @@ func NewTesterServerHandler(deferfunc ...func()) *TesterServerHandler {
 	r.HandleFunc(systems.HEALTHPATH, t.healthHandler)
 	r.HandleFunc(systems.CREATESTREAMPATH, t.createStreamHandler)
 	r.HandleFunc(systems.EVENTSPATH, t.testerServer.EventServe())
+	r.HandleFunc(systems.HOW_TO_GUIDE, t.howToHandler)
 
 	t.Handler = r
+	templ, err := template.ParseFiles(path.Join("templ", "how_to_guide.html"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	t.templ = templ
 
 	return t
+}
+
+func (t *TesterServerHandler) howToHandler(w http.ResponseWriter, r *http.Request) {
+	if err := t.templ.Execute(w, nil); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (t *TesterServerHandler) homeHandler(deferfunc ...func()) func(w http.ResponseWriter, r *http.Request) {

@@ -11,7 +11,7 @@ import (
 
 func main() {
 
-	hookPort := flag.Int("p", 3000, "specify the hook url, defaults to localhost:3000")
+	hookPort := flag.Int("p", 3001, "specify the hook url, defaults to localhost:3000")
 	flag.Parse()
 	hook := hook.NewHook(&hook.OsStdoutAdapter{})
 	println("Hook running on ", fmt.Sprintf("localhost:%d", *hookPort))
