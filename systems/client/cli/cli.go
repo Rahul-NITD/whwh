@@ -79,9 +79,9 @@ func getServerUrl() string {
 	if os.Getenv("AARGEEE_TEST") != "True" {
 		prod_url := os.Getenv("AARGEEE_PROD_URL")
 		if prod_url == "" {
-			slog.Error("AARGEEE_PROD_URL not provided!")
-			os.Exit(70)
-			return ""
+			// slog.Error("AARGEEE_PROD_URL not provided!")
+			// os.Exit(70)
+			return "https://whwh.rahulgoel.dev"
 		}
 		return prod_url
 	}

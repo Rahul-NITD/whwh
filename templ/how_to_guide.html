@@ -15,26 +15,26 @@
         <h3>Please follow the below steps to start testing your application right away.</h3>
         <div class="row">
           <div class="col-3">
-            <nav id="navbar-example3" class="h-100 flex-column align-items-stretch pe-4 border-end">
+            <nav id="usage-methods" class="h-100 flex-column align-items-stretch pe-4 border-end">
               <nav class="nav nav-pills flex-column">
-                <a class="nav-link" href="#item-1">Using Docker <span class="badge text-bg-success">Recommended</span></a>
+                <a class="nav-link" href="#1-Using_Docker">Using Docker <span class="badge text-bg-success">Recommended</span></a>
                 <nav class="nav nav-pills flex-column">
-                  <a class="nav-link ms-3 my-1" href="#item-1-1">1. Installing the image</a>
-                  <a class="nav-link ms-3 my-1" href="#item-1-2">Item 1-2</a>
+                  <a class="nav-link ms-3 my-1" href="#1-1-Installing_Client_image">1. Installing Client image</a>
+                  <a class="nav-link ms-3 my-1" href="#1-2-Starting_the_container">2. Starting the container</a>
+                  <a class="nav-link ms-3 my-1" href="#1-3-Test_your_client">3. Test your client</a>
                 </nav>
-                <a class="nav-link" href="#item-2">Item 2</a>
-                <a class="nav-link" href="#item-3">Item 3</a>
+                <a class="nav-link" href="#2-Using_Binary">Using binary</a>
                 <nav class="nav nav-pills flex-column">
-                  <a class="nav-link ms-3 my-1" href="#item-3-1">Item 3-1</a>
-                  <a class="nav-link ms-3 my-1" href="#item-3-2">Item 3-2</a>
+                  <a class="nav-link ms-3 my-1" href="#2-1-Downloading_Binary">1. Downloading client binary</a>
+                  <a class="nav-link ms-3 my-1" href="#2-2-Start_Binary">2. Starting Binary</a>
                 </nav>
               </nav>
             </nav>
           </div>
         
           <div class="col-8">
-            <div data-bs-spy="scroll" data-bs-target="#navbar-example3" data-bs-smooth-scroll="true" class="scrollspy-example-2" tabindex="0">
-              <div id="item-1">
+            <div data-bs-spy="scroll" data-bs-target="#usage-methods" data-bs-smooth-scroll="true" tabindex="0">
+              <div id="1-Using_Docker">
                 <h4>Using Docker <span class="badge text-bg-success">Recommended</span></h4>
                 <div>
                   <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 48 48">
@@ -43,39 +43,74 @@
                   <span>Docker <span class="badge text-bg-danger">Required</span></span>
                 </div>
                 <p>Using the docker image, you can run setup the client without any hassle.</p>
-              </div>
-              <div id="item-1-1">
-                <h5>1. Installing Client image</h5>
-                <div>The image can be installed using DockerHub. <a href="insertpath">here</a></div>
-                <div>To install the image, use this command</div>
-                <p>
-                  <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>docker pull "link"</code>
+                <div id="1-1-Installing_Client_image">
+                  <h5>1. Installing Client image</h5>
+                  <div>The image can be installed using DockerHub. <a href="https://hub.docker.com/r/dockarg/whwh_cli/tags">here</a></div>
+                  <div>To install the image, use this command</div>
+                  <p>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>docker pull dockarg/whwh_cli</code>
+                  </p>
+                </div>
+                <div id="1-2-Starting_the_container">
+                  <h5>2. Starting the container</h5>
+                  <p>Now that the image has been downloaded, you can start the container with the following command. <br>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>docker run -e AARGEEE_HOOK_URL=http://localhost:3001 dockarg/whwh_cli</code><br>
+                    This would have started the client. <br>
+                    <span class="badge text-bg-warning">Note</span> If <code>AARGEEE_HOOK_URL</code> is not provided, the default url <code>http://localhost:3000</code> is selected. <br>
+                    You must receive this as your output. <br>
+                    <code>time=... level=INFO msg="Starting WHWH Client... Thankyou for choosing me!"<br>
+                      time=... level=INFO msg="Received Hook Url: &lt;APP_URL&gt;"<br>
+                      time=... level=INFO msg="All data to https://whwh.rahulgoel.dev?stream=&lt;uniqueid&gt; will be forwarded to &lt;APP_URL&gt;"</code>
+                  </p>
+                </div>
+                <div id="1-3-Test_your_client">
+                  <h5>3. Test your client</h5>
+                  <p>paste your unique id here and click on the test button. <br>
+                    This will send the following payload to the hook url as a POST request. <br>
+                    <code>{ "payload": "test"}</code><br>
+                  <code>https://whhw.rahulgoel.dev?stream=</code><input type="text" name="uniqueid" size="35" required class="text-danger" id="id"> <button class="btn btn-success">Test</button>
                 </p>
+                </div>
               </div>
-              <div id="item-1-2">
-                <h5>2. Starting the container</h5>
-                <p>Now that the image has been downloaded, you can start the container with the following command. <br><code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>docker run -e AARGEEE_HOOK_URL=&lt;APP_URL&gt; "image"</code><br>This would have started the client.</p>
-              </div>
-              <div id="item-2">
-                <h4>3. Test your client</h4>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis quibusdam officia veritatis eius quo quae tempore odit voluptas numquam! Ad quo reiciendis sed dolore assumenda quis obcaecati sequi, exercitationem facere?</p>
-              </div>
-              <div id="item-3">
-                <h4>Item 3</h4>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis quibusdam officia veritatis eius quo quae tempore odit voluptas numquam! Ad quo reiciendis sed dolore assumenda quis obcaecati sequi, exercitationem facere?</p>
-              </div>
-              <div id="item-3-1">
-                <h5>Item 3-1</h5>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis quibusdam officia veritatis eius quo quae tempore odit voluptas numquam! Ad quo reiciendis sed dolore assumenda quis obcaecati sequi, exercitationem facere?</p>
-              </div>
-              <div id="item-3-2">
-                <h5>Item 3-2</h5>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis quibusdam officia veritatis eius quo quae tempore odit voluptas numquam! Ad quo reiciendis sed dolore assumenda quis obcaecati sequi, exercitationem facere?</p>
+              <div id="2-Using_Binary">
+                <h4>Using Binary</h4>
+                <p>
+                  You can use the latest binary release. You can download it using <code>wget</code><br>
+                  <span class="badge text-bg-primary">Windows</span>
+                  <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>wget -O whwh_cli.exe https://github.com/aargeee/whwh/releases/download/&lt;TAG&gt;/whwh_cli.exe</code><br>
+                  <span class="badge text-bg-primary">Linux</span>
+                  <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>wget -O whwh_cli https://github.com/aargeee/whwh/releases/download/&lt;TAG&gt;/whwh_cli</code><br>
+                  use the latest tag in place of <code>&lt;TAG&gt;</code>.
+                </p>
+                <div id="2-1-Downloading_Binary">
+                  <h5>1. Installing Client image</h5>
+                  <div>The image can be installed using DockerHub. <a href="https://hub.docker.com/r/dockarg/whwh_cli/tags">here</a></div>
+                  <div>To install the image, use this command</div>
+                  <p>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>docker pull dockarg/whwh_cli</code>
+                  </p>
+                </div>
+                <div id="2-2-Start_Binary">
+                  <h5>2. Starting the container</h5>
+                  <p>Now that the image has been downloaded, you can start the container with the following command. <br>
+                    <code><code style="user-select: none; -webkit-user-select: none; -ms-user-select: none;">> </code>docker run -e AARGEEE_HOOK_URL=http://localhost:3001 dockarg/whwh_cli</code><br>
+                    This would have started the client. <br>
+                    <span class="badge text-bg-warning">Note</span> If <code>AARGEEE_HOOK_URL</code> is not provided, the default url <code>http://localhost:3000</code> is selected. <br>
+                    You must receive this as your output. <br>
+                    <code>time=... level=INFO msg="Starting WHWH Client... Thankyou for choosing me!"<br>
+                      time=... level=INFO msg="Received Hook Url: &lt;APP_URL&gt;"<br>
+                      time=... level=INFO msg="All data to https://whwh.rahulgoel.dev?stream=&lt;uniqueid&gt; will be forwarded to &lt;APP_URL&gt;"</code>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <p>For any queries, Please contact me @<a href="mailto:rgoel1729@gmail.com">rgoel1729@gmail.com</a>❤️</p>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+
+    </script>
   </body>
 </html>
